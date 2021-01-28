@@ -17,7 +17,7 @@ if __name__ == '__main__':
         (int(vr.get(cv2.CAP_PROP_FRAME_WIDTH)), int(vr.get(cv2.CAP_PROP_FRAME_HEIGHT)))
     )
 
-    ebcd = EndoscopyBoundingCircleDetector(buffer_size=1)
+    ebcd = EndoscopyBoundingCircleDetector(buffer_size=5)
  
     while vr.isOpened():
 
@@ -25,8 +25,10 @@ if __name__ == '__main__':
         if img is None:
             break
 
-        center, radius = ebcd.findBoundingCircle(img, th1=5, th2=200, th3=10., decay=2., fit='analytic', n_pts=100, n_iter=4)
+        img = cv2.resize(img, (640, 360))
+        img = img[5:-5,:-5,:] # remove black bottom and top rows
 
+        center, radius = ebcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
         if radius is not None:
             center, radius = center.astype(np.int), int(radius)
 
