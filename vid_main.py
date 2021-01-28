@@ -25,7 +25,7 @@ if __name__ == '__main__':
         if img is None:
             break
 
-        center, radius = ebcd.findBoundingCircle(img, th1=5, th2=200, th3=10., decay=2., fit='analytic' n_pts=100, n_iter=4)
+        center, radius = ebcd.findBoundingCircle(img, th1=5, th2=200, th3=10., decay=2., fit='analytic', n_pts=100, n_iter=4)
 
         if radius is not None:
             center, radius = center.astype(np.int), int(radius)
