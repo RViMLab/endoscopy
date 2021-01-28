@@ -11,7 +11,6 @@ class EndoscopyBoundingCircleDetector():
             buffer_size (int): Optional argument to buffer past seen images
 
         Examples:
-
             Numeric and Canny edge detector:
                 ebcd = EndoscopyBoundingCircleDetector(buffer_size=1)
 
@@ -71,7 +70,7 @@ class EndoscopyBoundingCircleDetector():
             decay (flaot): Divides th3 by decay at each iteration
             n_pts (int): Points to sample in edge image, see algorithm step 5
             n_iter (int): Number of iterations to improve on found circle, see algorithm step 4
-            fit (str): Fit method, 'analytic' or 'numeric', if analytic, n_pts will be set to 3
+            fit (str): Fit method, 'analytic' or 'numeric', if analytic, n_pts will be set to 3. Analytic fit is faster, and numeric fit is usually more stable.
 
         Return:
             center (np.array): Circle's center
