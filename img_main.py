@@ -2,7 +2,7 @@ import cv2
 import os
 import numpy as np
 
-from endoscopy_bounding_circle_detector import EndoscopyBoundingCircleDetector
+from endoscopy.ransac_bounding_circle_detector import RansacBoundingCircleDetector
 
 if __name__ == '__main__':
     prefix = os.getcwd()
@@ -11,8 +11,8 @@ if __name__ == '__main__':
 
     img = cv2.imread(os.path.join(prefix, in_file))
 
-    ebcd = EndoscopyBoundingCircleDetector()
-    center, radius = ebcd.findBoundingCircle(img, th1=15, th2=200, th3=5, decay=2., fit='numeric', n_pts=200, n_iter=10)
+    bcd = RansacBoundingCircleDetector()
+    center, radius = bcd.findBoundingCircle(img, th1=15, th2=200, th3=5, decay=2., fit='numeric', n_pts=200, n_iter=10)
 
     if radius is not None:
         center, radius = center.astype(np.int), int(radius)
