@@ -240,7 +240,7 @@ if __name__ == '__main__':
 
     vr = cv2.VideoCapture(os.path.join(prefix, file))
 
-    ebcd = EndoscopyBoundingCircleDetector(buffer_size=5)
+    ebcd = EndoscopyBoundingCircleDetector(buffer_size=1)
  
     while vr.isOpened():
 
@@ -259,4 +259,4 @@ if __name__ == '__main__':
             cv2.circle(img, (center[1], center[0]), 2, (255,0,255), 4)
 
             cv2.imshow('img', img)
-            cv2.waitKey()
+            cv2.waitKey(1)

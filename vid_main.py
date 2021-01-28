@@ -17,7 +17,7 @@ if __name__ == '__main__':
         (int(vr.get(cv2.CAP_PROP_FRAME_WIDTH)), int(vr.get(cv2.CAP_PROP_FRAME_HEIGHT)))
     )
 
-    ebcd = EndoscopyBoundingCircleDetector(buffer_size=5)
+    ebcd = EndoscopyBoundingCircleDetector(buffer_size=1)
  
     while vr.isOpened():
 
