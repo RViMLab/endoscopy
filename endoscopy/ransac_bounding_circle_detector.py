@@ -3,7 +3,7 @@ import numpy as np
 from typing import Tuple
 
 
-class EndoscopyBoundingCircleDetector():
+class RansacBoundingCircleDetector():
     def __init__(self, buffer_size: int=1):
         """Bounding circle detection for endoscopic images.
 
@@ -12,10 +12,10 @@ class EndoscopyBoundingCircleDetector():
 
         Examples:
             Numeric and Canny edge detector:
-                ebcd = EndoscopyBoundingCircleDetector(buffer_size=1)
+                bcd = RansacBoundingCircleDetector(buffer_size=1)
 
                 # numeric fit, canny edge detector
-                center, radius = ebcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=2., fit='numeric', n_pts=10, n_iter=200)
+                center, radius = bcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=2., fit='numeric', n_pts=10, n_iter=200)
 
                 if radius is not None:
                     center, radius = center.astype(np.int), int(radius)
@@ -27,10 +27,10 @@ class EndoscopyBoundingCircleDetector():
                     cv2.waitKey()
             
             Analytic and Sobel edge detector
-                ebcd = EndoscopyBoundingCircleDetector(buffer_size=1)
+                bcd = RansacBoundingCircleDetector(buffer_size=1)
 
                 # analytic fit, sobel edge detector
-                center, radius = ebcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=2., fit='analytic', n_pts=10, n_iter=200, edge='sobel', kwargs={'dx': 1, 'dy': 1})
+                center, radius = bcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=2., fit='analytic', n_pts=10, n_iter=200, edge='sobel', kwargs={'dx': 1, 'dy': 1})
                    
                 if radius is not None:
                     center, radius = center.astype(np.int), int(radius)
@@ -197,7 +197,7 @@ class EndoscopyBoundingCircleDetector():
 
         return center, radius
 
-    def _buildLinearSystem(self, pts: np.array) -> Tuple[np.array, np.array]:
+    def _buildLinearSystem(self, pts: np.array, ) -> Tuple[np.array, np.array]:
         """Build linear system that describes circle, for example check https://math.stackexchange.com/questions/214661/circle-least-squares-fit
 
         Args:
@@ -240,7 +240,7 @@ if __name__ == '__main__':
 
     vr = cv2.VideoCapture(os.path.join(prefix, file))
 
-    ebcd = EndoscopyBoundingCircleDetector(buffer_size=1)
+    bcd = RansacBoundingCircleDetector(buffer_size=1)
  
     while vr.isOpened():
 
@@ -251,7 +251,7 @@ if __name__ == '__main__':
         img = cv2.resize(img, (640, 360))
         img = img[5:-5,:-5,:] # remove black bottom and top rows
 
-        center, radius = ebcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
+        center, radius = bcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
         if radius is not None:
             center, radius = center.astype(np.int), int(radius)
 
