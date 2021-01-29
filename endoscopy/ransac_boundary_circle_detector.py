@@ -244,7 +244,7 @@ if __name__ == '__main__':
 
     vr = cv2.VideoCapture(os.path.join(prefix, file))
 
-    bcd = RansacBoundaryCircleDetector(buffer_size=1)
+    bcd = RansacBoundaryCircleDetector(buffer_size=5)
  
     while vr.isOpened():
 
