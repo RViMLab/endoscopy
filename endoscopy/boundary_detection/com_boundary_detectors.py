@@ -3,18 +3,17 @@ import numpy as np
 from typing import Tuple
 
 
-def boundaryRectangle(img: np.array, th1: int=10) -> Tuple[np.array, tuple]:
+def boundaryRectangle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
     """Finds the rectangle that circumferences an endoscopic image.
 
     Args:
-        img (np.array): Input image of shape HxWxC
-        th1 (int): Whiten threshold, each pixel where value > th1 is whitened
+        img (np.array): Grayscale image of shape HxW
+        th (int): Whiten threshold, each pixel where value > th is whitened
 
     Return:
         rectangle (Tuple[np.array, tuple]): Top left corner and shape of found rectangle
     """
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img = np.where(img < th1, 0, 255).astype(np.uint8)
+    img = np.where(img < th, 0, 255).astype(np.uint8)
     
     col_mean = img.mean(axis=0)
     row_mean = img.mean(axis=1)
@@ -30,18 +29,17 @@ def boundaryRectangle(img: np.array, th1: int=10) -> Tuple[np.array, tuple]:
     return top_left, shape
 
 
-def boundaryCircle(img: np.array, th1: int=10) -> Tuple[np.array, tuple]:
+def boundaryCircle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
     """Find the circle that circumferences an endoscopic image. Works only with full view of the endoscopic image.
 
     Args:
-        img (np.array): Input image of shape HxWxC
-        th1 (int): Whiten threshold, each pixel where value > th1 is whitened
+        img (np.array): Grayscale image of shape HxW
+        th (int): Whiten threshold, each pixel where value > th is whitened
 
     Return:
         circle (Tuple[np.array, float]): Center and radius of found circle
     """
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    img = np.where(img < th1, 0, 255).astype(np.uint8)
+    img = np.where(img < th, 0, 255).astype(np.uint8)
 
     col_mean = img.mean(axis=0)
     row_mean = img.mean(axis=1)
@@ -65,8 +63,8 @@ if __name__ == '__main__':
 
     img = cv2.imread(os.path.join(prefix, in_file))
 
-    top_left, shape = boundaryRectangle(img, th1=30)   
-    center, radius = boundaryCircle(img, th1=30)
+    top_left, shape = boundaryRectangle(img, th=30)   
+    center, radius = boundaryCircle(img, th=30)
 
     top_left, shape, center, radius = top_left.astype(np.int), [int(i) for i in shape], center.astype(np.int), int(radius)
 

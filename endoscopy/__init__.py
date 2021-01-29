@@ -1,2 +1,1 @@
-from .com_boundary_detectors import boundaryCircle, boundaryRectangle
-from .ransac_boundary_circle_detector import RansacBoundaryCircleDetector
+from .boundary_detection import *
