@@ -24,7 +24,7 @@ def boundaryRectangle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
     right  = np.max(np.nonzero(col_mean))
 
     top_left = np.array([top, left])
-    shape = (bottom - top + 1, right - left + 1)
+    shape = tuple(bottom - top + 1, right - left + 1)
 
     return top_left, shape
 
