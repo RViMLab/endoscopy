@@ -29,7 +29,7 @@ def boundaryRectangle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
     return top_left, shape
 
 
-def boundaryCircle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
+def boundaryCircle(img: np.array, th: int=10) -> Tuple[np.array, float]:
     """Find the circle that circumferences an endoscopic image. Works only with full view of the endoscopic image.
 
     Args:
