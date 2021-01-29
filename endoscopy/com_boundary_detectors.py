@@ -3,7 +3,7 @@ import numpy as np
 from typing import Tuple
 
 
-def boundaryRectangle(img: np.array, th1: int=10) -> Tuple[list, list]:
+def boundaryRectangle(img: np.array, th1: int=10) -> Tuple[np.array, tuple]:
     """Finds the rectangle that circumferences an endoscopic image.
 
     Args:
@@ -11,7 +11,7 @@ def boundaryRectangle(img: np.array, th1: int=10) -> Tuple[list, list]:
         th1 (int): Whiten threshold, each pixel where value > th1 is whitened
 
     Return:
-        rectangle (Tuple[list, list]): Top left corner and shape of found rectangle
+        rectangle (Tuple[np.array, tuple]): Top left corner and shape of found rectangle
     """
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = np.where(img < th1, 0, 255).astype(np.uint8)
@@ -19,18 +19,18 @@ def boundaryRectangle(img: np.array, th1: int=10) -> Tuple[list, list]:
     col_mean = img.mean(axis=0)
     row_mean = img.mean(axis=1)
 
-    bottom = np.min(np.nonzero(row_mean))
-    top    = np.max(np.nonzero(row_mean))
+    top    = np.min(np.nonzero(row_mean))
+    bottom = np.max(np.nonzero(row_mean))
     left   = np.min(np.nonzero(col_mean))
     right  = np.max(np.nonzero(col_mean))
 
-    top_left = [top, left]
-    shape = [bottom - top, right - left]
+    top_left = np.array([top, left])
+    shape = (bottom - top, right - left)
 
     return top_left, shape
 
 
-def boundaryCircle(img: np.array, th1: int=10) -> Tuple[list, float]:
+def boundaryCircle(img: np.array, th1: int=10) -> Tuple[np.array, tuple]:
     """Find the circle that circumferences an endoscopic image. Works only with full view of the endoscopic image.
 
     Args:
@@ -38,7 +38,7 @@ def boundaryCircle(img: np.array, th1: int=10) -> Tuple[list, float]:
         th1 (int): Whiten threshold, each pixel where value > th1 is whitened
 
     Return:
-        circle (Tuple[list, float]): Center and radius of found circle
+        circle (Tuple[np.array, float]): Center and radius of found circle
     """
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = np.where(img < th1, 0, 255).astype(np.uint8)
@@ -54,59 +54,25 @@ def boundaryCircle(img: np.array, th1: int=10) -> Tuple[list, float]:
 
     radius = max(col_radius, row_radius)
 
-    return [row_com, col_com], radius
+    return np.array([row_com, col_com]), radius
 
 
 if __name__ == '__main__':
     import os
-    from copy import deepcopy
-    from ransac_bounding_circle_detector import RansacBoundingCircleDetector
 
     prefix = os.getcwd()
-    file = 'data/endo.mp4'
+    in_file = 'data/eye.tif'
 
-    vr = cv2.VideoCapture(os.path.join(prefix, file))
+    img = cv2.imread(os.path.join(prefix, in_file))
 
-    bcd = RansacBoundingCircleDetector(buffer_size=10)
- 
-    th1 = 10
+    top_left, shape = boundaryRectangle(img, th1=30)   
+    center, radius = boundaryCircle(img, th1=30)
 
-    while vr.isOpened():
+    top_left, shape, center, radius = top_left.astype(np.int), [int(i) for i in shape], center.astype(np.int), int(radius)
 
-        _, img = vr.read()
-        if img is None:
-            break
+    cv2.rectangle(img, (top_left[1], top_left[0]), (top_left[1] + shape[1], top_left[0] + shape[0]), (255, 255, 0), 1)
+    cv2.circle(img, (center[1], center[0]), radius, (0,255,255), 1)
+    cv2.circle(img, (center[1], center[0]), 2, (255,0,255), 4)
 
-        img = cv2.resize(img, (640, 360))
-        img = img[5:-5,:-5,:] # remove black bottom and top rows
-
-
-
-        top_left, shape = boundaryRectangle(img, th1=th1)
-        center0, radius0 = boundaryCircle(img, th1=th1)
-
-    
-        
-        img_com = deepcopy(img)
-        cv2.circle(img_com, (int(center0[1]), int(center0[0])), int(radius0), (0,255,255), 1)
-        cv2.circle(img_com, (int(center0[1]), int(center0[0])), 2, (255,0,255), 4)
-
-        cv2.rectangle(img_com, (top_left[1], top_left[0]), (top_left[1] + shape[1], top_left[0] + shape[0]), (255, 255, 0), 1)
-
-
-        # ecd
-        center1, radius1 = bcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
-
-        if radius1 is not None:
-            center1, radius1 = center1.astype(np.int), int(radius1)
-
-            img_ran = deepcopy(img)
-            cv2.circle(img_ran, (center1[1], center1[0]), radius1, (0,255,255), 1)
-            cv2.circle(img_ran, (center1[1], center1[0]), 2, (255,0,255), 4)
-
-            # show output
-            fps = 25
-            cv2.imshow('img_com', img_com)
-            cv2.imshow('img_ran', img_ran)
-            # cv2.waitKey(int(1/25*1000))
-            cv2.waitKey()
+    cv2.imshow('img', img)
+    cv2.waitKey()

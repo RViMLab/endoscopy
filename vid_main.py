@@ -2,7 +2,7 @@ import cv2
 import os
 import numpy as np
 
-from endoscopy_bounding_circle_detector import EndoscopyBoundingCircleDetector
+from endoscopy import RansacBoundaryCircleDetector, boundaryRectangle
 
 if __name__ == '__main__':
     prefix = os.getcwd()
@@ -17,7 +17,7 @@ if __name__ == '__main__':
         (int(vr.get(cv2.CAP_PROP_FRAME_WIDTH)), int(vr.get(cv2.CAP_PROP_FRAME_HEIGHT)))
     )
 
-    ebcd = EndoscopyBoundingCircleDetector(buffer_size=1)
+    bcd = RansacBoundaryCircleDetector(buffer_size=10)
  
     while vr.isOpened():
 
@@ -28,10 +28,12 @@ if __name__ == '__main__':
         img = cv2.resize(img, (640, 360))
         img = img[5:-5,:-5,:] # remove black bottom and top rows
 
-        center, radius = ebcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
+        top_left, shape = boundaryRectangle(img, th1=5)
+        center, radius = bcd.findBoundaryCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
         if radius is not None:
             center, radius = center.astype(np.int), int(radius)
 
+            cv2.rectangle(img, (top_left[1], top_left[0]), (top_left[1] + shape[1], top_left[0] + shape[0]), (255, 255, 0), 1)
             cv2.circle(img, (center[1], center[0]), radius, (0,255,255), 1)
             cv2.circle(img, (center[1], center[0]), 2, (255,0,255), 4)
 

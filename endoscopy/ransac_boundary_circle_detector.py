@@ -3,19 +3,19 @@ import numpy as np
 from typing import Tuple
 
 
-class RansacBoundingCircleDetector():
+class RansacBoundaryCircleDetector():
     def __init__(self, buffer_size: int=1):
-        """Bounding circle detection for endoscopic images.
+        """Boundary circle detection for endoscopic images.
 
         Args:
             buffer_size (int): Optional argument to buffer past seen images
 
         Examples:
             Numeric and Canny edge detector:
-                bcd = RansacBoundingCircleDetector(buffer_size=1)
+                bcd = RansacBoundaryCircleDetector(buffer_size=1)
 
                 # numeric fit, canny edge detector
-                center, radius = bcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=2., fit='numeric', n_pts=10, n_iter=200)
+                center, radius = bcd.findBoundaryCircle(img, th1=5, th2=100, th3=10, decay=2., fit='numeric', n_pts=10, n_iter=200)
 
                 if radius is not None:
                     center, radius = center.astype(np.int), int(radius)
@@ -27,10 +27,10 @@ class RansacBoundingCircleDetector():
                     cv2.waitKey()
             
             Analytic and Sobel edge detector
-                bcd = RansacBoundingCircleDetector(buffer_size=1)
+                bcd = RansacBoundaryCircleDetector(buffer_size=1)
 
                 # analytic fit, sobel edge detector
-                center, radius = bcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=2., fit='analytic', n_pts=10, n_iter=200, edge='sobel', kwargs={'dx': 1, 'dy': 1})
+                center, radius = bcd.findBoundaryCircle(img, th1=5, th2=100, th3=10, decay=2., fit='analytic', n_pts=10, n_iter=200, edge='sobel', kwargs={'dx': 1, 'dy': 1})
                    
                 if radius is not None:
                     center, radius = center.astype(np.int), int(radius)
@@ -46,8 +46,8 @@ class RansacBoundingCircleDetector():
         self.best_center = np.array([])
         self.best_radius = None
 
-    def findBoundingCircle(self, img: np.array, th1: int=5. , th2: int=200., th3: float=10., decay: float=2., fit='analytic', n_pts: int=100, n_iter: int=100, edge='canny', kwargs: dict={'threshold1': 100, 'threshold2': 200}) -> Tuple[np.array, float]:
-        """Finds bounding circle in an endoscopic image via the following method
+    def findBoundaryCircle(self, img: np.array, th1: int=5. , th2: int=200., th3: float=10., decay: float=2., fit='analytic', n_pts: int=100, n_iter: int=100, edge='canny', kwargs: dict={'threshold1': 100, 'threshold2': 200}) -> Tuple[np.array, float]:
+        """Finds boundary circle in an endoscopic image via the following method
 
             Algorithm: 
                 1. Turn image into grayscale and whiten where img > th1
@@ -201,6 +201,7 @@ class RansacBoundingCircleDetector():
         """Build linear system that describes circle, for example check https://math.stackexchange.com/questions/214661/circle-least-squares-fit
 
         Args:
+            pts (np.array): Image points of shape Nx2
 
         Return:
             A (np.array): Linear system matrix
@@ -219,6 +220,8 @@ class RansacBoundingCircleDetector():
         """Solve linear system for center and radius, for example check https://math.stackexchange.com/questions/214661/circle-least-squares-fit
 
         Args:
+            A (np.array): Linear system matrix
+            b (np.array): Offset to linear equation
 
         Return:
             center (np.array): Circle's center
@@ -234,13 +237,14 @@ class RansacBoundingCircleDetector():
 
 if __name__ == '__main__':
     import os
+    from com_boundary_detectors import boundaryRectangle
 
     prefix = os.getcwd()
     file = 'data/endo.mp4'
 
     vr = cv2.VideoCapture(os.path.join(prefix, file))
 
-    bcd = RansacBoundingCircleDetector(buffer_size=1)
+    bcd = RansacBoundaryCircleDetector(buffer_size=1)
  
     while vr.isOpened():
 
@@ -251,10 +255,13 @@ if __name__ == '__main__':
         img = cv2.resize(img, (640, 360))
         img = img[5:-5,:-5,:] # remove black bottom and top rows
 
-        center, radius = bcd.findBoundingCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
+        top_left, shape = boundaryRectangle(img, 5)
+        center, radius = bcd.findBoundaryCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
         if radius is not None:
+            top_left, shape = top_left.astype(np.int), [int(i) for i in shape]
             center, radius = center.astype(np.int), int(radius)
 
+            cv2.rectangle(img, (top_left[1], top_left[0]), (top_left[1] + shape[1], top_left[0] + shape[0]), (255, 255, 0), 1)
             cv2.circle(img, (center[1], center[0]), radius, (0,255,255))
             cv2.circle(img, (center[1], center[0]), 2, (255,0,255), 4)
 
