@@ -55,6 +55,21 @@ def boundaryCircle(img: np.array, th: int=10) -> Tuple[np.array, float]:
     return np.array([row_com, col_com]), radius
 
 
+def is_zoomed(img: np.array, th: float=0.99) -> bool:
+    """Determines if an image is zoomed by computing the average intensity.
+
+    Args:
+        img (np.array): Binary image of shape HxW
+        th (float): Threshold for zoomed image
+
+    Return:
+        is_zoomed (bool): Is zoomed if mean(img) > th
+    """
+    mean = img.mean()/img.max()
+    is_zoomed = mean >= th
+    return is_zoomed
+
+
 if __name__ == '__main__':
     import os
 
