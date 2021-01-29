@@ -24,7 +24,7 @@ def boundaryRectangle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
     right  = np.max(np.nonzero(col_mean))
 
     top_left = np.array([top, left])
-    shape = tuple(bottom - top + 1, right - left + 1)
+    shape = (bottom - top + 1, right - left + 1)
 
     return top_left, shape
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     top_left, shape = boundaryRectangle(img_gray, th=30)   
     center, radius = boundaryCircle(img_gray, th=30)
 
-    top_left, shape, center, radius = top_left.astype(np.int), [int(i) for i in shape], center.astype(np.int), int(radius)
+    top_left, shape, center, radius = top_left.astype(np.int), tuple(map(int, shape)), center.astype(np.int), int(radius)
 
     cv2.rectangle(img, (top_left[1], top_left[0]), (top_left[1] + shape[1], top_left[0] + shape[0]), (255, 255, 0), 1)
     cv2.circle(img, (center[1], center[0]), radius, (0,255,255), 1)
