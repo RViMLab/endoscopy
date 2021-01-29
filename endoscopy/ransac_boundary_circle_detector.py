@@ -15,7 +15,7 @@ class RansacBoundaryCircleDetector():
                 bcd = RansacBoundaryCircleDetector(buffer_size=1)
 
                 # numeric fit, canny edge detector
-                center, radius = bcd.findBoundaryCircle(img, th1=5, th2=100, th3=10, decay=2., fit='numeric', n_pts=10, n_iter=200)
+                center, radius = bcd.findBoundaryCircle(img, th1=5, th2=10, decay=2., fit='numeric', n_pts=10, n_iter=200)
 
                 if radius is not None:
                     center, radius = center.astype(np.int), int(radius)
@@ -30,7 +30,7 @@ class RansacBoundaryCircleDetector():
                 bcd = RansacBoundaryCircleDetector(buffer_size=1)
 
                 # analytic fit, sobel edge detector
-                center, radius = bcd.findBoundaryCircle(img, th1=5, th2=100, th3=10, decay=2., fit='analytic', n_pts=10, n_iter=200, edge='sobel', kwargs={'dx': 1, 'dy': 1})
+                center, radius = bcd.findBoundaryCircle(img, th1=5, th2=10, decay=2., fit='analytic', n_pts=10, n_iter=200, edge='sobel', kwargs={'dx': 1, 'dy': 1})
                    
                 if radius is not None:
                     center, radius = center.astype(np.int), int(radius)
@@ -46,30 +46,28 @@ class RansacBoundaryCircleDetector():
         self.best_center = np.array([])
         self.best_radius = None
 
-    def findBoundaryCircle(self, img: np.array, th1: int=5. , th2: int=200., th3: float=10., decay: float=2., fit='analytic', n_pts: int=100, n_iter: int=100, edge='canny', kwargs: dict={'threshold1': 100, 'threshold2': 200}) -> Tuple[np.array, float]:
+    def findBoundaryCircle(self, img: np.array, th1: int=5. , th2: float=10., decay: float=2., fit='analytic', n_pts: int=100, n_iter: int=100, edge='canny', kwargs: dict={'threshold1': 100, 'threshold2': 200}) -> Tuple[np.array, float]:
         """Finds boundary circle in an endoscopic image via the following method
 
             Algorithm: 
-                1. Turn image into grayscale and whiten where img > th1
+                1. Turn image into grayscale compute moving average of length self.buffer_size, blacken where moving average < th1
                 2. Edge detection
-                3. Compute moving average of length self.buffer_size of edge image and blacken where moving average < th2
-                4. Do RANSAC circle fit (https://en.wikipedia.org/wiki/Random_sample_consensus)
+                3. Do RANSAC circle fit (https://en.wikipedia.org/wiki/Random_sample_consensus)
                        for n_iter:
-                           5.  Sample n_pts maybe inliers in edge image
-                           6.  Fit circle to n_pts, where n_pts is set to 3 for fit == 'analytic'
-                           7.  Find also inliers, points that are closer than th3 to the circle circumference
-                           8.  If number of also inliers bigger than best number of also inliers, re-fit circle to maybe + also inliers
-                           9.  Find inliers of re-fit model, if percentage of inliers better than best percentage, save radius and center of model
-                           10. Divide th3 by decay
+                           4. Sample n_pts maybe inliers in edge image
+                           5. Fit circle to n_pts, where n_pts is set to 3 for fit == 'analytic'
+                           6. Find also inliers, points that are closer than th2 to the circle circumference
+                           7. If number of also inliers bigger than best number of also inliers, re-fit circle to maybe + also inliers
+                           8. Find inliers of re-fit model, if percentage of inliers better than best percentage, save radius and center of model
+                           9. Divide th2 by decay
 
         Args:
             img (np.array): Image of shape CxHxW
-            th1 (int): Whiten threshold, see algorithm step 1
-            th2 (int): Moving avergage blacken threshold, see algorithm step 3
-            th3 (float): Distance to circle circumference threshold, see algorithm step 7, 9
-            decay (flaot): Divides th3 by decay at each iteration
-            n_pts (int): Points to sample in edge image, see algorithm step 5
-            n_iter (int): Number of iterations to improve on found circle, see algorithm step 4
+            th1 (int): Blacken threshold, see algorithm step 1
+            th2 (float): Distance to circle circumference threshold, see algorithm step 6, 8
+            decay (flaot): Divides th2 by decay at each iteration
+            n_pts (int): Points to sample in edge image, see algorithm step 4
+            n_iter (int): Number of iterations to improve on found circle, see algorithm step 3
             fit (str): Fit method, 'analytic' or 'numeric', if analytic, n_pts will be set to 3. Analytic fit is faster, and numeric fit is usually more stable
 
         Return:
@@ -80,39 +78,39 @@ class RansacBoundaryCircleDetector():
         if fit == 'analytic':
             n_pts = 3
 
-        # Step 1, grayscale
+        # Step 1, grayscale moving average
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        img = np.where(img < th1, 0, 255).astype(np.uint8)
-
-        # Step 2, edge detection
-        if edge == 'canny':
-            img = cv2.Canny(img, **kwargs)
-        elif edge == 'sobel':
-            img = cv2.Sobel(img, ddepth=cv2.CV_8U, **kwargs)
-        else:
-            assert 'Edge detector "{}" not supported.'.format(edge)
-
-        # Step 3, moving average
         self.buffer.append(img)
-
-        # Track results
-        best_n_also_inliers = 0
-        best_percentage = 0.
 
         if len(self.buffer) == self.buffer_size:
             avg = np.array(self.buffer)
             avg = avg.mean(axis=0)
-            pt_set = np.where(avg > th2)
+
+            avg = np.where(avg < th1, 0, 255).astype(np.uint8)
+
+            # Step 2, edge detection
+            if edge == 'canny':
+                avg = cv2.Canny(avg, **kwargs)
+            elif edge == 'sobel':
+                avg = cv2.Sobel(avg, ddepth=cv2.CV_8U, **kwargs)
+            else:
+                assert 'Edge detector "{}" not supported.'.format(edge)
+
+            # Track results
+            best_n_also_inliers = 0
+            best_percentage = 0.
+
+            pt_set = np.where(avg > 0)
             self.buffer.pop(0)
             pt_set = np.stack((pt_set[0], pt_set[1]), axis=1)
 
             if pt_set.size == 0:
                 return self.best_center, self.best_radius
 
-            # Step 4, RANSAC circle fit
+            # Step 3, RANSAC circle fit
             for i in range(n_iter):
 
-                # Step 5, sample maybe_inliers
+                # Step 4, sample maybe_inliers
                 pt_set_idcs = np.arange(pt_set.shape[0])
                 pt_subset_idcs = np.random.choice(pt_set_idcs, size=min(n_pts, pt_set_idcs.shape[0]),replace=False)
 
@@ -124,7 +122,7 @@ class RansacBoundaryCircleDetector():
 
                 maybe_inliers = pt_set[pt_subset_idcs] + 0.5
 
-                # Step 6, fit model
+                # Step 5, fit model
                 if fit == 'analytic':
                     center, radius = self._threePointCircle(maybe_inliers[0], maybe_inliers[1], maybe_inliers[2])
                 elif fit == 'numeric':
@@ -136,12 +134,12 @@ class RansacBoundaryCircleDetector():
                 if radius is None:
                     continue
 
-                # Step 7, find also_inliers
+                # Step 6, find also_inliers
                 pt_subset_complement = pt_set[pt_subset_mask == False]
                 distance_to_center = np.linalg.norm(center - pt_subset_complement, axis=1)
-                also_inliers = pt_subset_complement[np.where(np.abs(distance_to_center - radius) < th3)] + 0.5
+                also_inliers = pt_subset_complement[np.where(np.abs(distance_to_center - radius) < th2)] + 0.5
 
-                # Step 8, re-fit model on all inliers
+                # Step 7, re-fit model on all inliers
                 if also_inliers.size > best_n_also_inliers:
                     best_n_also_inliers = also_inliers.shape[0]
                     inliers = np.concatenate((maybe_inliers, also_inliers))
@@ -154,17 +152,17 @@ class RansacBoundaryCircleDetector():
                     else:
                         assert 'Fit method "{}" unknown'.format(fit)
 
-                    # Step 9, save best model
+                    # Step 8, save best model
                     distance_to_center = np.linalg.norm(center - inliers, axis=1)
-                    total_inliers = pt_set[np.where(np.abs(distance_to_center - radius) < th3)]
+                    total_inliers = pt_set[np.where(np.abs(distance_to_center - radius) < th2)]
                     
                     percentage = total_inliers.shape[0]/pt_set.shape[0]
                     if percentage > best_percentage:
                         best_percentage = percentage
                         self.best_center, self.best_radius = center, radius
 
-                # Step 10, decay distance threshold
-                th3 /= decay
+                # Step 9, decay distance threshold
+                th2 /= decay
 
         return self.best_center, self.best_radius
 
@@ -256,7 +254,7 @@ if __name__ == '__main__':
         img = img[5:-5,:-5,:] # remove black bottom and top rows
 
         top_left, shape = boundaryRectangle(img, 5)
-        center, radius = bcd.findBoundaryCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
+        center, radius = bcd.findBoundaryCircle(img, th1=5, th2=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
         if radius is not None:
             top_left, shape = top_left.astype(np.int), [int(i) for i in shape]
             center, radius = center.astype(np.int), int(radius)

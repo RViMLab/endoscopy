@@ -29,7 +29,7 @@ if __name__ == '__main__':
         img = img[5:-5,:-5,:] # remove black bottom and top rows
 
         top_left, shape = boundaryRectangle(img, th1=5)
-        center, radius = bcd.findBoundaryCircle(img, th1=5, th2=100, th3=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
+        center, radius = bcd.findBoundaryCircle(img, th1=5, th2=10, decay=1., fit='numeric', n_pts=100, n_iter=10)
         if radius is not None:
             center, radius = center.astype(np.int), int(radius)
 

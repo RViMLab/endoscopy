@@ -12,7 +12,7 @@ if __name__ == '__main__':
     img = cv2.imread(os.path.join(prefix, in_file))
 
     bcd = RansacBoundaryCircleDetector()
-    center, radius = bcd.findBoundaryCircle(img, th1=15, th2=200, th3=5, decay=2., fit='numeric', n_pts=200, n_iter=10)
+    center, radius = bcd.findBoundaryCircle(img, th1=15, th2=5, decay=2., fit='numeric', n_pts=200, n_iter=10)
 
     if radius is not None:
         center, radius = center.astype(np.int), int(radius)
