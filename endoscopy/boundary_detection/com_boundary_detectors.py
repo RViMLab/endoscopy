@@ -62,9 +62,10 @@ if __name__ == '__main__':
     in_file = 'data/eye.tif'
 
     img = cv2.imread(os.path.join(prefix, in_file))
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    top_left, shape = boundaryRectangle(img, th=30)   
-    center, radius = boundaryCircle(img, th=30)
+    top_left, shape = boundaryRectangle(img_gray, th=30)   
+    center, radius = boundaryCircle(img_gray, th=30)
 
     top_left, shape, center, radius = top_left.astype(np.int), [int(i) for i in shape], center.astype(np.int), int(radius)
 
