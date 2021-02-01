@@ -22,7 +22,7 @@ def maxRectangleInCircle(img_shape: np.array, center: np.array, radius: float, r
 
     d0 = center
     d1 = img_shape[:2] - center
-    d1 -= 1  # shape encode position + 1
+    d1 -= 1  # shape encodes position + 1
 
     new_ratio_shape = (
         min(2*min(d0[0], d1[0]) + 1, h),
