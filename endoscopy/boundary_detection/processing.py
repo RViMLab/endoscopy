@@ -3,7 +3,7 @@ from typing import Tuple
 
 
 def maxRectangleInCircle(img_shape: np.array, center: np.array, radius: float, ratio: float=3./4.) -> Tuple[np.array, tuple]:
-    """Finds the maximum sized rectangle of given aspect ratio within a circle. The circle may be cropped within an image.
+    r"""Finds the maximum sized rectangle of given aspect ratio within a circle. The circle may be cropped within an image.
     For example see https://drive.google.com/file/d/1GMS1V415pAxdRkf2GoYLWjSFbx33cwew/view?usp=sharing.
 
     Args:
@@ -46,7 +46,7 @@ def maxRectangleInCircle(img_shape: np.array, center: np.array, radius: float, r
 
 
 def isZoomed(img: np.array, th: float=0.99) -> Tuple[bool, float]:
-    """Determines if an image is zoomed by computing the average intensity.
+    r"""Determines if an image is zoomed by computing the average intensity.
 
     Args:
         img (np.array): Binary image of shape HxW

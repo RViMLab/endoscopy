@@ -4,7 +4,7 @@ from typing import Tuple
 
 
 def boundaryRectangle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
-    """Finds the rectangle that circumferences an endoscopic image.
+    r"""Finds the rectangle that circumferences an endoscopic image.
 
     Args:
         img (np.array): Grayscale image of shape HxW
@@ -30,7 +30,7 @@ def boundaryRectangle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
 
 
 def boundaryCircle(img: np.array, th: int=10) -> Tuple[np.array, float]:
-    """Find the circle that circumferences an endoscopic image. Works only with full view of the endoscopic image.
+    r"""Find the circle that circumferences an endoscopic image. Works only with full view of the endoscopic image.
 
     Args:
         img (np.array): Grayscale image of shape HxW

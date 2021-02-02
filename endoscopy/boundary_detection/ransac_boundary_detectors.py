@@ -4,7 +4,7 @@ from typing import Tuple
 
 
 def threePointCircle(p1: np.array, p2: np.array, p3: np.array) -> Tuple[np.array, float]:
-    """Computes a circle, given 3 points on that circle, see https://stackoverflow.com/questions/26222525/opencv-detect-partial-circle-with-noise.
+    r"""Computes a circle, given 3 points on that circle, see https://stackoverflow.com/questions/26222525/opencv-detect-partial-circle-with-noise.
 
     Args:
         p1 (np.array): Point 1 on circle.
@@ -33,7 +33,7 @@ def threePointCircle(p1: np.array, p2: np.array, p3: np.array) -> Tuple[np.array
     return center, radius
 
 def buildLinearSystem(pts: np.array) -> Tuple[np.array, np.array]:
-    """Build linear system that describes circle, for example check https://math.stackexchange.com/questions/214661/circle-least-squares-fit
+    r"""Build linear system that describes circle, for example check https://math.stackexchange.com/questions/214661/circle-least-squares-fit
 
     Args:
         pts (np.array): Image points of shape Nx2
@@ -52,7 +52,7 @@ def buildLinearSystem(pts: np.array) -> Tuple[np.array, np.array]:
     return A, b
 
 def solveSystem(A, b) -> Tuple[np.array, float]:
-    """Solve linear system for center and radius, for example check https://math.stackexchange.com/questions/214661/circle-least-squares-fit
+    r"""Solve linear system for center and radius, for example check https://math.stackexchange.com/questions/214661/circle-least-squares-fit
 
     Args:
         A (np.array): Linear system matrix
@@ -70,7 +70,7 @@ def solveSystem(A, b) -> Tuple[np.array, float]:
     return x[:-1], radius
 
 def ransacBoundaryCircle(img: np.array, th: float=10., decay: float=2., fit='analytic', n_pts: int=100, n_iter: int=100, edge='canny', kwargs: dict={'threshold1': 100, 'threshold2': 200}) -> Tuple[np.array, float]:
-    """Finds boundary circle in an endoscopic image via the following method
+    r"""Finds boundary circle in an endoscopic image via the following method
 
         Algorithm: 
             1. Edge detection

@@ -31,7 +31,7 @@ class ImageBuffer():
         del self._buffer
 
     def binaryAvg(self, th: float) -> np.array:
-        """Averages buffer and return binary image with cut-off threshold th.
+        r"""Averages buffer and return binary image with cut-off threshold th.
 
         Args:
             th (float): After averaging the buffer, everything below th is set to 0, else 255
@@ -45,7 +45,7 @@ class ImageBuffer():
         return avg
     
     def appendBuffer(self, img: np.array, conversion: str='BGR2GRAY'):
-        """Takes image and appends buffer with grayscale of that image.
+        r"""Takes image and appends buffer with grayscale of that image.
 
         Args:
             img (np.array): Image of shape HxWxC
