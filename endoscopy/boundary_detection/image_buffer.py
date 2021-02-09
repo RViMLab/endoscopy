@@ -43,6 +43,20 @@ class ImageBuffer():
         avg = avg.mean(axis=0)
         avg = np.where(avg < th, 0, 255).astype(np.uint8)
         return avg
+
+    def binaryVar(self, th: float) -> np.array:
+        r"""Averages buffer and return binary image with cut-off threshold th.
+
+        Args:
+            th (float): After computing the buffer's variance, everything below th is set to 255, else 0
+
+        Return:
+            var (np.array): Binary variance
+        """
+        var = np.array(self._buffer)
+        var = var.var(axis=0)
+        var = np.where(var < th, 255, 0).astype(np.uint8)
+        return var
     
     def appendBuffer(self, img: np.array, conversion: str='BGR2GRAY'):
         r"""Takes image and appends buffer with grayscale of that image.
@@ -81,7 +95,8 @@ if __name__ == '__main__':
             break
 
         ib.appendBuffer(img)
-        img = ib.binaryAvg(5)
+        # img = ib.binaryAvg(5)
+        img = ib.binaryVar(0.5)
 
         cv2.imshow('img', img)
         cv2.waitKey()
