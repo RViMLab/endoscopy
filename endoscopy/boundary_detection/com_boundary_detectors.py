@@ -3,15 +3,15 @@ import numpy as np
 from typing import Tuple
 
 
-def boundaryRectangle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
+def boundaryRectangle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, tuple]:
     r"""Finds the rectangle that circumferences an endoscopic image.
 
     Args:
-        img (np.array): Grayscale image of shape HxW
+        img (np.ndarray): Grayscale image of shape HxW
         th (int): Whiten threshold, each pixel where value > th is whitened
 
     Return:
-        rectangle (Tuple[np.array, tuple]): Top left corner and shape of found rectangle
+        rectangle (Tuple[np.ndarray, tuple]): Top left corner and shape of found rectangle
     """
     img = np.where(img < th, 0, 255).astype(np.uint8)
     
@@ -29,15 +29,15 @@ def boundaryRectangle(img: np.array, th: int=10) -> Tuple[np.array, tuple]:
     return top_left, shape
 
 
-def boundaryCircle(img: np.array, th: int=10) -> Tuple[np.array, float]:
+def boundaryCircle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, float]:
     r"""Find the circle that circumferences an endoscopic image. Works only with full view of the endoscopic image.
 
     Args:
-        img (np.array): Grayscale image of shape HxW
+        img (np.ndarray): Grayscale image of shape HxW
         th (int): Whiten threshold, each pixel where value > th is whitened
 
     Return:
-        circle (Tuple[np.array, float]): Center and radius of found circle
+        circle (Tuple[np.ndarray, float]): Center and radius of found circle
     """
     img = np.where(img < th, 0, 255).astype(np.uint8)
 
