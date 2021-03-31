@@ -75,3 +75,19 @@ def binaryAvg(imgs: List[np.ndarray], th: float) -> np.ndarray:
     avg = avg.mean(axis=0)
     avg = np.where(avg < th, 0, 255).astype(np.uint8)
     return avg
+
+
+def binaryVar(imgs: List[np.ndarray], th: float) -> np.ndarray:
+    r"""Averages buffer and return binary image with cut-off threshold th.
+
+    Args:
+        imgs (List[np.ndarray]): Image buffer
+        th (float): After computing the buffer's variance, everything below th is set to 255, else 0
+
+    Return:
+        var (np.ndarray): Binary variance
+    """
+    var = np.array(imgs)
+    var = var.var(axis=0)
+    var = np.where(var < th, 255, 0).astype(np.uint8)
+    return var
