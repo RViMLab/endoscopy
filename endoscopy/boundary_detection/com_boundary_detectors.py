@@ -18,10 +18,16 @@ def boundaryRectangle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, tuple]:
     col_mean = img.mean(axis=0)
     row_mean = img.mean(axis=1)
 
-    top    = np.min(np.nonzero(row_mean))
-    bottom = np.max(np.nonzero(row_mean))
-    left   = np.min(np.nonzero(col_mean))
-    right  = np.max(np.nonzero(col_mean))
+    nonzero_col_mean = np.nonzero(col_mean)
+    nonzero_row_mean = np.nonzero(row_mean)
+
+    if not len(nonzero_col_mean[0]) or not len(nonzero_row_mean[0]):
+        return np.array([]), tuple((0,))
+
+    top    = np.min(nonzero_row_mean)
+    bottom = np.max(nonzero_row_mean)
+    left   = np.min(nonzero_col_mean)
+    right  = np.max(nonzero_col_mean)
 
     top_left = np.array([top, left])
     shape = (bottom - top + 1, right - left + 1)
@@ -47,8 +53,14 @@ def boundaryCircle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, float]:
     col_com = np.sum(np.multiply(np.arange(col_mean.shape[0]), col_mean), axis=0)/col_mean.sum()
     row_com = np.sum(np.multiply(np.arange(row_mean.shape[0]), row_mean), axis=0)/row_mean.sum()
 
-    col_radius = (np.max(np.nonzero(col_mean)) - np.min(np.nonzero(col_mean)))/2.
-    row_radius = (np.max(np.nonzero(row_mean)) - np.min(np.nonzero(row_mean)))/2.
+    nonzero_col_mean = np.nonzero(col_mean)
+    nonzero_row_mean = np.nonzero(row_mean)
+
+    if not len(nonzero_col_mean[0]) or not len(nonzero_row_mean[0]):
+        return np.array([]), None
+
+    col_radius = (np.max(nonzero_col_mean) - np.min(nonzero_col_mean))/2.
+    row_radius = (np.max(nonzero_row_mean) - np.min(nonzero_row_mean))/2.
 
     radius = max(col_radius, row_radius)
 
