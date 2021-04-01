@@ -78,7 +78,7 @@ def isZoomed(img: np.ndarray, th: float=0.99) -> Tuple[bool, float]:
     return is_zoomed, confidence
 
 
-def binaryAvg(imgs: List[np.ndarray], th: float) -> np.ndarray:
+def binaryAvg(imgs: List[np.ndarray], th: float=10.) -> np.ndarray:
     r"""Averages buffer and return binary image with cut-off threshold th.
 
     Args:
