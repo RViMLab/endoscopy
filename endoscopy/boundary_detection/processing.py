@@ -45,6 +45,23 @@ def maxRectangleInCircle(img_shape: np.ndarray, center: np.ndarray, radius: floa
     return top_left, shape
 
 
+def crop(img: np.ndarray, top_left: np.ndarray, shape: tuple) -> np.ndarray:
+    r"""Crops and image, given the top left corner and the desired shape.
+
+    Args:
+        img (np.ndarray): Image of shape HxWxC
+        top_left (np.ndarray): Top left corner
+        shape (tuple): Cropped shape in (H, W)
+
+    Return:
+        img (np.ndarray): Cropped image
+    """
+    return img[
+        top_left[0]:top_left[0] + shape[0],
+        top_left[1]:top_left[1] + shape[1]
+    ]
+
+
 def isZoomed(img: np.ndarray, th: float=0.99) -> Tuple[bool, float]:
     r"""Determines if an image is zoomed by computing the average intensity.
 
