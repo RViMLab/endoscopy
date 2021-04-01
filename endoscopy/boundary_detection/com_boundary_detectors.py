@@ -48,7 +48,7 @@ def boundaryCircle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, float]:
     row_com = np.sum(np.multiply(np.arange(row_mean.shape[0]), row_mean), axis=0)/row_mean.sum()
 
     col_radius = (np.max(np.nonzero(col_mean)) - np.min(np.nonzero(col_mean)))/2.
-    row_radius = (np.max(np.nonzero(col_mean)) - np.min(np.nonzero(col_mean)))/2.
+    row_radius = (np.max(np.nonzero(row_mean)) - np.min(np.nonzero(row_mean)))/2.
 
     radius = max(col_radius, row_radius)
 
