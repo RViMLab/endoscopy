@@ -8,26 +8,24 @@ def boundaryRectangle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, tuple]:
 
     Args:
         img (np.ndarray): Grayscale image of shape HxW
-        th (int): Whiten threshold, each pixel where value > th is whitened
+        th (int): Gradient threshold, only look for gradient where mean < th
 
     Return:
         rectangle (Tuple[np.ndarray, tuple]): Top left corner and shape of found rectangle
     """
-    img = np.where(img < th, 0, 255).astype(np.uint8)
-    
     col_mean = img.mean(axis=0)
     row_mean = img.mean(axis=1)
 
-    nonzero_col_mean = np.nonzero(col_mean)
-    nonzero_row_mean = np.nonzero(row_mean)
+    col_grad = np.gradient(col_mean)
+    row_grad = np.gradient(row_mean)
 
-    if not len(nonzero_col_mean[0]) or not len(nonzero_row_mean[0]):
-        return np.array([]), tuple((0,))
+    col_grad = np.where(col_mean < th, col_grad, 0)  # search gradient where mean < th
+    row_grad = np.where(row_mean < th, row_grad, 0)
 
-    top    = np.min(nonzero_row_mean)
-    bottom = np.max(nonzero_row_mean)
-    left   = np.min(nonzero_col_mean)
-    right  = np.max(nonzero_col_mean)
+    top    = np.argmax(row_grad)
+    bottom = np.argmin(row_grad)
+    left   = np.argmax(col_grad)
+    right  = np.argmin(col_grad)
 
     top_left = np.array([top, left])
     shape = (bottom - top + 1, right - left + 1)
@@ -40,27 +38,29 @@ def boundaryCircle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, float]:
 
     Args:
         img (np.ndarray): Grayscale image of shape HxW
-        th (int): Whiten threshold, each pixel where value > th is whitened
+        th (int): Gradient threshold, only look for gradient where mean < th
 
     Return:
         circle (Tuple[np.ndarray, float]): Center and radius of found circle
     """
-    img = np.where(img < th, 0, 255).astype(np.uint8)
-
     col_mean = img.mean(axis=0)
     row_mean = img.mean(axis=1)
+
+    col_grad = np.gradient(col_mean)
+    row_grad = np.gradient(row_mean)
+
+    col_grad = np.where(col_mean < th, col_grad, 0)  # search gradient where mean < th
+    row_grad = np.where(row_mean < th, row_grad, 0)
+
+    # min/max
+    col_min, col_max = np.argmin(col_grad), np.argmax(col_grad)
+    row_min, row_max = np.argmin(row_grad), np.argmax(row_grad)
 
     col_com = np.sum(np.multiply(np.arange(col_mean.shape[0]), col_mean), axis=0)/col_mean.sum()
     row_com = np.sum(np.multiply(np.arange(row_mean.shape[0]), row_mean), axis=0)/row_mean.sum()
 
-    nonzero_col_mean = np.nonzero(col_mean)
-    nonzero_row_mean = np.nonzero(row_mean)
-
-    if not len(nonzero_col_mean[0]) or not len(nonzero_row_mean[0]):
-        return np.array([]), None
-
-    col_radius = (np.max(nonzero_col_mean) - np.min(nonzero_col_mean))/2.
-    row_radius = (np.max(nonzero_row_mean) - np.min(nonzero_row_mean))/2.
+    col_radius = (col_min - col_max)/2.
+    row_radius = (row_min - row_max)/2.
 
     radius = max(col_radius, row_radius)
 
