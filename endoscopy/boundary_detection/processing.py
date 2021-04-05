@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 from typing import Tuple, List
 
@@ -108,3 +109,39 @@ def binaryVar(imgs: List[np.ndarray], th: float) -> np.ndarray:
     var = var.var(axis=0)
     var = np.where(var < th, 255, 0).astype(np.uint8)
     return var
+
+
+def illuminationLevel(img: np.ndarray, center: np.ndarray, radius: float) -> float:
+    r"""Computes the illumination level in an area of interest, given a binary image.
+
+    Args:
+        img (np.ndarray): Binary image of shape HxW
+        center (np.ndarray): Circle's center
+        radius (float): Circle's radius
+
+    Return:
+        level (float): Illumination level within circle in [0, 1]
+    """
+    xx, yy = np.mgrid[:img.shape[0], :img.shape[1]]
+    distance_map  = np.sqrt((xx - center[0])**2 + (yy - center[1])**2)
+    level = float(img[distance_map < radius].mean())/float(img.max())
+    return level
+
+
+def bilateralSegmentation(img: np.ndarray, th: float, d: int=15, sigmaColor: float=75, sigmaSpace: float=75) -> np.ndarray:
+    r"""Computes a segmentation based on a bilateral filtered image.
+
+    Args:
+        img (np.ndarray): Image to be segmented
+        th (float): Value threshold in HSV color space
+        d (int): Diameter of each pixel neighborhood that is used during filtering (see OpenCV)
+        sigmaColor (float): Filter sigma in the color space (see OpenCV)
+        sigmaSpace (float): Filter sigma in the coordinate space (see OpenCV)
+
+    Return:
+        mask (np.ndarray): Segmentation result in [0, 255]
+    """
+    hsv = cv2.bilateralFilter(img, d, sigmaColor, sigmaSpace)
+    hsv = cv2.cvtColor(hsv, cv2.COLOR_BGR2HSV)
+    hsv = hsv.astype(np.float)/hsv.max()
+    return cv2.bitwise_not(cv2.inRange(hsv, (0., 0., 0.), (1., 1., th)))
