@@ -124,8 +124,10 @@ def illuminationLevel(img: np.ndarray, center: np.ndarray, radius: float) -> flo
     """
     xx, yy = np.mgrid[:img.shape[0], :img.shape[1]]
     distance_map  = np.sqrt((xx - center[0])**2 + (yy - center[1])**2)
-    level = float(img[distance_map < radius].mean())/float(img.max())
-    return level
+    if img.max() == 0.:
+        return 0
+    else:
+        return float(img[distance_map < radius].mean())/float(img.max())
 
 
 def bilateralSegmentation(img: np.ndarray, th: float, d: int=15, sigmaColor: float=75, sigmaSpace: float=75) -> np.ndarray:
