@@ -30,7 +30,7 @@ class CoMBoundaryTracker(object):
         if illumination >= th2:
             self._center, self._radius = center, radius
 
-        return self._center, self._radius
+        return self._center.astype(np.int), int(self._radius)
 
     def updateBoundaryRectangle(self, img: np.ndarray, th1: int=10, th2: float=0.98) -> Tuple[np.ndarray, tuple]:
         r"""Update the boundary rectanlge.

@@ -29,7 +29,7 @@ if __name__ == '__main__':
     print('Rectanlge: {}\{}'.format(rectangle[0], rectangle[1]))
 
     # draw results
-    center, radius = circle[0].astype(np.int), int(circle[1])
+    center, radius = circle
     top_left, shape = rectangle
     cv2.circle(img, (center[1], center[0]), radius, (255, 255, 0))
     cv2.rectangle(img, (top_left[1], top_left[0]), (top_left[1]+shape[1], top_left[0]+shape[0]), (255, 0, 255))
