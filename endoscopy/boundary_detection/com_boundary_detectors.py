@@ -26,8 +26,14 @@ def boundaryCircle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, float]:
     col_min, col_max = np.argmin(col_grad), np.argmax(col_grad)
     row_min, row_max = np.argmin(row_grad), np.argmax(row_grad)
 
-    col_com = np.sum(np.multiply(np.arange(col_mean.shape[0]), col_mean), axis=0)/col_mean.sum()
-    row_com = np.sum(np.multiply(np.arange(row_mean.shape[0]), row_mean), axis=0)/row_mean.sum()
+    col_mean_integral = col_mean.sum()
+    row_mean_integral = row_mean.sum()
+
+    if col_mean_integral == 0. or row_mean_integral == 0.:
+        return np.array([]), None
+
+    col_com = np.sum(np.multiply(np.arange(col_mean.shape[0]), col_mean), axis=0)/col_mean_integral
+    row_com = np.sum(np.multiply(np.arange(row_mean.shape[0]), row_mean), axis=0)/row_mean_integral
 
     col_radius = (col_min - col_max)/2.
     row_radius = (row_min - row_max)/2.

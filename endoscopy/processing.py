@@ -3,7 +3,7 @@ import numpy as np
 from typing import Tuple, List, Union
 
 
-def maxRectangleInCircle(img_shape: np.ndarray, center: np.ndarray, radius: float, ratio: float=3./4.) -> Tuple[np.ndarray, tuple]:
+def maxRectangleInCircle(img_shape: np.ndarray, center: np.ndarray, radius: float, safety_margin: int=10, ratio: float=3./4.) -> Tuple[np.ndarray, tuple]:
     r"""Finds the maximum sized rectangle of given aspect ratio within a circle. The circle may be cropped within an image.
     For example see https://drive.google.com/file/d/1GMS1V415pAxdRkf2GoYLWjSFbx33cwew/view?usp=sharing.
 
@@ -11,6 +11,7 @@ def maxRectangleInCircle(img_shape: np.ndarray, center: np.ndarray, radius: floa
         img_shape (np.ndarray): Shape of image in which circle lies, HxWxC
         center (np.ndarray): Circle's center
         radius (float): Circle's radius
+        safety_margin (int): Radius safety margin in pixels
         ratio (float): Height/width ratio of rectanlge
 
     Return:
@@ -18,6 +19,7 @@ def maxRectangleInCircle(img_shape: np.ndarray, center: np.ndarray, radius: floa
         shape (tuple): Rectangle's shape
     """
     # Construct rectangle of given ratio with edges on circle
+    radius -= safety_margin
     w = 2*radius/np.sqrt(ratio**2 + 1)
     h = np.sqrt(4*radius**2 - w**2)
 
@@ -134,7 +136,7 @@ def bilateralSegmentation(img: np.ndarray, th: float, d: int=15, sigmaColor: flo
     r"""Computes a segmentation based on a bilateral filtered image.
 
     Args:
-        img (np.ndarray): Image to be segmented
+        img (np.ndarray): Image to be segmented of shape HxWxC
         th (float): Value threshold in HSV color space
         d (int): Diameter of each pixel neighborhood that is used during filtering (see OpenCV)
         sigmaColor (float): Filter sigma in the color space (see OpenCV)
@@ -145,5 +147,7 @@ def bilateralSegmentation(img: np.ndarray, th: float, d: int=15, sigmaColor: flo
     """
     hsv = cv2.bilateralFilter(img, d, sigmaColor, sigmaSpace)
     hsv = cv2.cvtColor(hsv, cv2.COLOR_BGR2HSV)
+    if hsv.max() == 0:
+        return np.zeros(img.shape[:-1])
     hsv = hsv.astype(np.float)/hsv.max()
     return cv2.bitwise_not(cv2.inRange(hsv, (0., 0., 0.), (1., 1., th)))

@@ -25,10 +25,16 @@ class CoMBoundaryTracker(object):
             circle (Tuple[np.ndarray, float]): Center and radius of found circle, or previous values
         """
         center, radius = boundaryCircle(img, th1)
+        if center.shape[0] == 0 or radius is None:
+            return self._center, self._radius
+            
         illumination = illuminationLevel(img, center, radius)
 
         if illumination >= th2:
             self._center, self._radius = center, radius
+
+        if self._center.shape[0] == 0 or self._radius is None:  # not initialized
+            return self._center, self._radius
 
         return self._center.astype(np.int), int(self._radius)
 
