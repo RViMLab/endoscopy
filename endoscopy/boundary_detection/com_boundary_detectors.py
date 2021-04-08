@@ -3,41 +3,11 @@ import numpy as np
 from typing import Tuple
 
 
-def boundaryRectangle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, tuple]:
-    r"""Finds the rectangle that circumferences an endoscopic image.
-
-    Args:
-        img (np.ndarray): Grayscale image of shape HxW
-        th (int): Gradient threshold, only look for gradient where mean < th
-
-    Return:
-        rectangle (Tuple[np.ndarray, tuple]): Top left corner and shape of found rectangle
-    """
-    col_mean = img.mean(axis=0)
-    row_mean = img.mean(axis=1)
-
-    col_grad = np.gradient(col_mean)
-    row_grad = np.gradient(row_mean)
-
-    col_grad = np.where(col_mean < th, col_grad, 0)  # search gradient where mean < th
-    row_grad = np.where(row_mean < th, row_grad, 0)
-
-    top    = np.argmax(row_grad)
-    bottom = np.argmin(row_grad)
-    left   = np.argmax(col_grad)
-    right  = np.argmin(col_grad)
-
-    top_left = np.array([top, left])
-    shape = (bottom - top + 1, right - left + 1)
-
-    return top_left, shape
-
-
 def boundaryCircle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, float]:
     r"""Find the circle that circumferences an endoscopic image. Works only with full view of the endoscopic image.
 
     Args:
-        img (np.ndarray): Grayscale image of shape HxW
+        img (np.ndarray): Grayscale image or segmentation mask of shape HxW
         th (int): Gradient threshold, only look for gradient where mean < th
 
     Return:
@@ -65,6 +35,36 @@ def boundaryCircle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, float]:
     radius = max(col_radius, row_radius)
 
     return np.array([row_com, col_com]), radius
+
+
+def boundaryRectangle(img: np.ndarray, th: int=10) -> Tuple[np.ndarray, tuple]:
+    r"""Finds the rectangle that circumferences an endoscopic image.
+
+    Args:
+        img (np.ndarray): Grayscale image or segmentation mask of shape HxW
+        th (int): Gradient threshold, only look for gradient where mean < th
+
+    Return:
+        rectangle (Tuple[np.ndarray, tuple]): Top left corner and shape of found rectangle
+    """
+    col_mean = img.mean(axis=0)
+    row_mean = img.mean(axis=1)
+
+    col_grad = np.gradient(col_mean)
+    row_grad = np.gradient(row_mean)
+
+    col_grad = np.where(col_mean < th, col_grad, 0)  # search gradient where mean < th
+    row_grad = np.where(row_mean < th, row_grad, 0)
+
+    top    = np.argmax(row_grad)
+    bottom = np.argmin(row_grad)
+    left   = np.argmax(col_grad)
+    right  = np.argmin(col_grad)
+
+    top_left = np.array([top, left])
+    shape = (bottom - top + 1, right - left + 1)
+
+    return top_left, shape
 
 
 if __name__ == '__main__':

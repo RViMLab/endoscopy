@@ -11,7 +11,6 @@ class ImageBuffer():
         if buffer_size <= 0:
             raise ValueError("Buffer buffer_size must be greater than zero.")
         self._buffer = []
-        self._avg_buffer = np.array([])
 
     @property
     def buffer_size(self) -> int:

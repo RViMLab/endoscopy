@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from typing import Tuple, List
+from typing import Tuple, List, Union
 
 
 def maxRectangleInCircle(img_shape: np.ndarray, center: np.ndarray, radius: float, ratio: float=3./4.) -> Tuple[np.ndarray, tuple]:
