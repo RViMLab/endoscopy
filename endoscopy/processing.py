@@ -65,6 +65,41 @@ def crop(img: np.ndarray, top_left: np.ndarray, shape: tuple) -> np.ndarray:
     ]
 
 
+def updateCroppedPrincipalPoint(top_left: np.ndarray, K: np.ndarray) -> np.ndarray:
+    r"""Updates the camera's principal point under image cropping.
+
+    Args:
+        top_left (np.ndarray): Top left corner of cropped image
+        K (np.ndarray): Intrinsic camera parameters
+
+    Return:
+        K_prime (np.ndarray): Updated intrinsic camera parameters (OpenCV convention)
+    """
+    K_prime = K
+    K_prime[0,2] -= top_left[1]  # cx 
+    K_prime[1,2] -= top_left[0]  # cy
+    return K_prime
+
+
+def updateScaledPrincipalPoint(src_shape: tuple, dst_shape: tuple, K: np.ndarray) -> np.ndarray:
+    r"""Updates the camera's principal point under image scaling.
+
+    Args:
+        src_shape (tuple): Source shape HxWxC/HxW
+        dst_shape (tuple): Destination shape HxWxC/HxW
+        K (np.ndarray): Intrinsic camera parameters
+
+    Return:
+        K_prime (np.ndarray): Updated intrinsic camera parameters (OpenCV convention)
+    """
+    K_prime = K
+
+    scale = np.divide(dst_shape[:2], src_shape[:2])
+    K_prime[0,2] *= scale[1]  # cx
+    K_prime[1,2] *= scale[0]  # cy
+    return K_prime
+
+
 def isZoomed(img: np.ndarray, th: float=0.99) -> Tuple[bool, float]:
     r"""Determines if an image is zoomed by computing the average intensity.
 
