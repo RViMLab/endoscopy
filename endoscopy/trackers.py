@@ -12,6 +12,8 @@ class CoMBoundaryTracker(object):
     def __init__(self):
         self._center, self._radius = np.array([]), None
         self._top_left, self._shape = np.array([]), tuple()
+        self._init_circle = False
+        self._init_rectangle = False
 
     def updateBoundaryCircle(self, img: np.ndarray, th1: int=10, th2: float=0.98):
         r"""Update the boundary circle.
@@ -36,6 +38,7 @@ class CoMBoundaryTracker(object):
         if self._center.shape[0] == 0 or self._radius is None:  # not initialized
             return self._center, self._radius
 
+        self._init_circle = True
         return self._center.astype(np.int), int(self._radius)
 
     def updateBoundaryRectangle(self, img: np.ndarray, th1: int=10, th2: float=0.98) -> Tuple[np.ndarray, tuple]:
@@ -56,7 +59,16 @@ class CoMBoundaryTracker(object):
         if illumination >= th2:
             self._top_left, self._shape = top_left, shape
 
+        self._init_rectangle = True
         return self._top_left, self._shape
+
+    @property
+    def initCircle(self):
+        return self._init_circle
+
+    @property
+    def initRectangle(self):
+        return self._init_rectangle
 
     @property
     def circle(self) -> Tuple[np.ndarray, float]:
