@@ -184,5 +184,5 @@ def bilateralSegmentation(img: np.ndarray, th: float, d: int=15, sigmaColor: flo
     hsv = cv2.cvtColor(hsv, cv2.COLOR_BGR2HSV)
     if hsv.max() == 0:
         return np.zeros(img.shape[:-1])
-    hsv = hsv.astype(np.float)/hsv.max()
+    hsv = hsv.astype(float)/hsv.max()
     return cv2.bitwise_not(cv2.inRange(hsv, (0., 0., 0.), (1., 1., th)))
