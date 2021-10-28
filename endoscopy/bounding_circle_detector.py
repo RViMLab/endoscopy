@@ -1,29 +1,40 @@
 import torch
-from .utils.loader import load_model
-# from .utils.post_processing import 
+import kornia
+from typing import Tuple, Any, Callable
 
-import torch
-from typing import Any
+from .utils.loader import load_model
+from .utils.circle_linear_system import circle_linear_system, const2rad
 
 
 class BoundingCircleDetector():
     device: str
     model: Any
+    canny: Callable
     
     def __init__(self, device: str="cuda", name: str="model") -> None:
         self.device = device
         self.model = load_model(device, name)
-        # print(self.model.type)
+        self.canny = kornia.filters.Canny()
 
-    def __call__(self, img: torch.FloatTensor) -> torch.FloatTensor:
+    def __call__(self, img: torch.FloatTensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Foward pass of BoundingCircleDetector.
 
         Args:
             img (torch.FloatTensor): Needs to be normalized in [0, 1].
         Return:
-            seg (torch.FloatTensor): Segmentation mask.
+            center (torch.Tensor): Circle's center.
+            radius (torch.Tensor): Circle's radius.
         """
         seg = self.model(img.to(self.device))
-        return seg
+        _, edg = self.canny(seg)
+
+        pts = edg.nonzero().float()
+
+        A, b = circle_linear_system(pts)
+        x = torch.linalg.lstsq(A, b).solution
+
+        center, radius = x[:2], const2rad(x)
+
+        return center, radius
 
 
