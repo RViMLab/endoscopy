@@ -1,2 +1,4 @@
 # python cache
 *__pycache__
+endoscopy.egg-info/*
+dist*

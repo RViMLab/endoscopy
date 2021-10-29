@@ -1,17 +1,30 @@
-# Endoscopy Bounding Circle Detector
-Extract the bounding circle from endoscopic images. Examples are shown for the [DRIVE](https://drive.grand-challenge.org/) and the [cholec80](http://camma.u-strasbg.fr/datasets) dataset, see below
+# Endoscopy
+Utilities for processing of endoscopic images.
 
-<p align="center">
-  <img src="img/result_eye.png" height="200" />
-  <img src="img/result_endo.gif" height="200" /> 
-</p>
+## Installation
+To install, simply run
+```shell
+pip install endoscopy
+```
 
 ## Example
-To run an example on video data, try
-```shell
-python vid_main.py  # runs for ~10s
-```
 To run an example on a single image, try
 ```shell
 python img_main.py
 ```
+
+## Credits
+If you use this work as part of your project, please consider citing our [paper](https://arxiv.org/abs/2109.15098)
+```bibtex
+@article{huber2021deep,
+  title={Deep Homography Estimation in Dynamic Surgical Scenes for Laparoscopic Camera Motion Extraction},
+  author={Huber, Martin and Ourselin, S{\'e}bastien and Bergeles, Christos and Vercauteren, Tom},
+  journal={arXiv preprint arXiv:2109.15098},
+  year={2021}
+}
+```
+
+## Notes
+ - SVD doesnt work for incomplete data
+ - Simple least squares doesn't work if not at center and angle not zero https://jekel.me/2020/Least-Squares-Ellipsoid-Fit/
+ - Linearize?
