@@ -8,9 +8,9 @@ pip install endoscopy
 ```
 
 ## Example
-To run an example on a single image, try
+Check out the [examples](https://github.com/RViMLab/endoscopy), run
 ```shell
-python img_main.py
+python img_main.py # vid_main.py
 ```
 
 ## Credits
@@ -23,8 +23,3 @@ If you use this work as part of your project, please consider citing our [paper]
   year={2021}
 }
 ```
-
-## Notes
- - SVD doesnt work for incomplete data
- - Simple least squares doesn't work if not at center and angle not zero https://jekel.me/2020/Least-Squares-Ellipsoid-Fit/
- - Linearize?
