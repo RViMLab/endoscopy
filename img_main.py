@@ -20,7 +20,7 @@ if __name__ == "__main__":
     center, radius = center.cpu().numpy().astype(int), int(radius)
 
     # plot
-    cv2.circle(img, (center[1], center[0]), radius, (255, 255, 0), 2)
+    cv2.circle(img, (center[1,0], center[0,0]), radius, (255, 255, 0), 2)
 
     cv2.imshow("img", img)
     cv2.waitKey()
