@@ -4,7 +4,7 @@ from .circle_linear_system import circle_linear_system, const_to_rad
 
 __all__ = [
     "load_model",
+    "max_rectangle_in_circle",
     "circle_linear_system",
-    "const_to_rad",
-    "max_rectangle_in_circle"
+    "const_to_rad"
 ]
