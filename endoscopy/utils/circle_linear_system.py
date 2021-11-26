@@ -27,7 +27,7 @@ def circle_linear_system(pts: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
 
     return A, b
 
-def const2rad(x: torch.Tensor) -> torch.Tensor:
+def const_to_rad(x: torch.Tensor) -> torch.Tensor:
     """Retrieve radius from solution to linear system.
 
     Args:

@@ -3,7 +3,7 @@ import kornia
 from typing import Tuple, Any, Callable
 
 from .utils.loader import load_model
-from .utils.circle_linear_system import circle_linear_system, const2rad
+from .utils.circle_linear_system import circle_linear_system, const_to_rad
 
 
 class BoundingCircleDetector():
@@ -26,6 +26,8 @@ class BoundingCircleDetector():
             center (torch.Tensor): Circle's center of shape Bx2.
             radius (torch.Tensor): Circle's radius of shape B.
         """
+        if len(img.shape) is not 4:
+            raise RuntimeError("BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(len(img.shape)))
         seg = self.model(img.to(self.device))
         _, edg = self.canny(seg)
 
@@ -43,6 +45,6 @@ class BoundingCircleDetector():
         A, b = circle_linear_system(pts)
         x = torch.linalg.lstsq(A, b).solution
 
-        center, radius = x[:,:2], const2rad(x)
+        center, radius = x[:,:2], const_to_rad(x)
 
-        return center.squeeze(), radius.squeeze()
+        return center.squeeze(-1), radius.squeeze(-1)
