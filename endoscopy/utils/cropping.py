@@ -32,7 +32,7 @@ def max_rectangle_in_circle(img_shape: torch.Size, center: torch.Tensor, radius:
         torch.min(2*torch.min(d0[:,1], d1[:,1]) + 1, w)
     ], axis=-1)
 
-    new_ratio = new_ratio_shape[:,0]/new_ratio_shape[:,1]
+    new_ratio = (new_ratio_shape[:,0]/new_ratio_shape[:,1]).unsqueeze(-1)
 
     shape = torch.where(
         ratio/new_ratio < 1,

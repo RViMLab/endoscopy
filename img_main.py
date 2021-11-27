@@ -24,10 +24,10 @@ if __name__ == "__main__":
     # conversions
     img = tensor_to_image(img, False)
     crp = tensor_to_image(crp, False)
-    center, radius = center.cpu().numpy().astype(int), int(radius)
+    center, radius = center.int().cpu().numpy(), radius.int().cpu().numpy()
 
     # plot
-    cv2.circle(img, (center[0, 1], center[0, 0]), radius, (255, 255, 0), 2)
+    cv2.circle(img, (center[0, 1], center[0, 0]), radius[0], (255, 255, 0), 2)
 
     cv2.imshow("img", img)
     cv2.imshow("crp", crp)
