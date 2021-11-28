@@ -16,19 +16,28 @@ class BoundingCircleDetector():
         self.model = load_model(device, name)
         self.canny = kornia.filters.Canny()
 
-    def __call__(self, img: torch.FloatTensor, N: int=100) -> Tuple[torch.Tensor, torch.Tensor]:
+    def __call__(self, img: torch.FloatTensor, N: int=100, reduction: str="mean") -> Tuple[torch.Tensor, torch.Tensor]:
         """Foward pass of BoundingCircleDetector.
 
         Args:
             img (torch.FloatTensor): Needs to be normalized in [0, 1].
             N (int): Number of non-zero samples.
+            reduction (str): Segmentation reduction along batch dimension.
         Return:
             center (torch.Tensor): Circle's center of shape Bx2.
             radius (torch.Tensor): Circle's radius of shape B.
         """
         if len(img.shape) is not 4:
             raise RuntimeError("BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(len(img.shape)))
-        seg = self.model(img.to(self.device))
+        if reduction is None:
+            seg = self.model(img.to(self.device))
+        elif reduction == "mean":
+            seg = self.model(img.to(self.device)).mean(dim=0, keepdim=True)
+        elif reduction == "max":
+            seg, _ = self.model(img.to(self.device)).max(dim=0, keepdim=True)
+        else:
+            raise ValueError("BoundingCircleDetector: Invalid reduction {} passed.".format(reduction))
+
         _, edg = self.canny(seg)
 
         pts = []

@@ -15,7 +15,7 @@ if __name__ == "__main__":
     img = image_to_tensor(img, keepdim=False).float()/255.
  
     # detect circle
-    center, radius = detector(img, N=1000)
+    center, radius = detector(img, N=1000, reduction=None)
 
     # find maximum rectangle in circle
     box = max_rectangle_in_circle(img.shape, center, radius)
