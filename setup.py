@@ -10,7 +10,7 @@ requirements = [
 
 setuptools.setup(
     name="endoscopy",
-    version="0.0.11",
+    version="0.0.12",
     author="Martin Huber",
     author_email="martin.huber@kcl.ac.uk",
     description="Image processing utilities for endoscopic images.",
