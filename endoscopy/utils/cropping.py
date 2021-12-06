@@ -15,8 +15,8 @@ def max_rectangle_in_circle(img_shape: torch.Size, center: torch.Tensor, radius:
     Return:
         box (torch.Tensor): Box of shape Bx4x2
     """
-    if len(center.shape) != 2:
-        raise ValueError("Expected center of shape Bx2, got {}".format(center.shape))
+    if center.dim() != 2:
+        raise ValueError("Expected center of shape Bx2, got {}".format(center.dim()))
 
     # Construct rectangle of given ratio with edges on circle
     safety_radius = radius - safety_margin

@@ -27,9 +27,9 @@ class BoundingCircleDetector():
             center (torch.Tensor): Circle's center of shape Bx2.
             radius (torch.Tensor): Circle's radius of shape B.
         """
-        if len(img.shape) is not 4:
-            raise RuntimeError("BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(len(img.shape)))
-        if reduction is None:
+        if img.dim() != 4:
+            raise RuntimeError("BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(img.dim()))
+        if reduction == None:
             seg = self.model(img.to(self.device))
         elif reduction == "mean":
             seg = self.model(img.to(self.device)).mean(dim=0, keepdim=True)
