@@ -11,7 +11,7 @@ class BoundingCircleDetector():
     model: Any
     canny: Callable
     
-    def __init__(self, device: str="cuda", name: str="model") -> None:
+    def __init__(self, device: str="cuda", name: str="segmentation_unet_resnet_34_tiny") -> None:
         self.device = device
         self.model = load_model(device, name)
         self.canny = kornia.filters.Canny()
@@ -29,7 +29,7 @@ class BoundingCircleDetector():
         """
         if img.dim() != 4:
             raise RuntimeError("BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(img.dim()))
-        if reduction == None:
+        if reduction is None:
             seg = self.model(img.to(self.device))
         elif reduction == "mean":
             seg = self.model(img.to(self.device)).mean(dim=0, keepdim=True)
