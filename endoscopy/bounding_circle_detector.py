@@ -2,7 +2,7 @@ import torch
 import kornia
 from typing import Tuple, Any, Callable
 
-from .utils.loader import load_model
+from .utils.loader import load_model, SEGMENTATION_MODEL
 from .utils.circle_linear_system import circle_linear_system, const_to_rad
 
 
@@ -11,9 +11,9 @@ class BoundingCircleDetector():
     model: Any
     canny: Callable
     
-    def __init__(self, device: str="cuda", name: str="seg_unet_resnet_34_tiny") -> None:
+    def __init__(self, device: str="cuda", model_enum: SEGMENTATION_MODEL=SEGMENTATION_MODEL.UNET_RESNET_34_TINY) -> None:
         self.device = device
-        self.model = load_model(device, name)
+        self.model = load_model(device, model_enum)
         self.canny = kornia.filters.Canny()
 
     def __call__(self, img: torch.FloatTensor, N: int=100, reduction: str="mean") -> Tuple[torch.Tensor, torch.Tensor]:
