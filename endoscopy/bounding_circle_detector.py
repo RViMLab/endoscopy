@@ -11,7 +11,7 @@ class BoundingCircleDetector():
     model: Any
     canny: Callable
     
-    def __init__(self, device: str="cuda", model_enum: SEGMENTATION_MODEL=SEGMENTATION_MODEL.UNET_RESNET_34_TINY) -> None:
+    def __init__(self, device: str="cuda", model_enum: SEGMENTATION_MODEL=SEGMENTATION_MODEL.UNET_RESNET_34) -> None:
         self.device = device
         self.model = load_model(device, model_enum)
         self.canny = kornia.filters.Canny()
