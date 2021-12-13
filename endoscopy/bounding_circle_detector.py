@@ -42,9 +42,9 @@ class BoundingCircleDetector():
 
         pts = []
         for e in edg:
-            if e.numel() < N:
-                raise RuntimeError("BoundingCircleDetector: Non suffiecient non-zero elements to sample from, got {}, required {}".format(e.numel(), N))
             nonzero = e.nonzero().float()
+            if nonzero.numel() < N:
+                raise RuntimeError("BoundingCircleDetector: Non suffiecient non-zero elements to sample from, got {}, required {}".format(nonzero.numel(), N))
             pts.append(
                 nonzero[torch.randperm(nonzero.shape[0], device=self.device)[:N]]  # sampling without replacement: https://discuss.pytorch.org/t/torch-equivalent-of-numpy-random-choice/16146/19
             )
