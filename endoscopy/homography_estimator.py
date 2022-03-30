@@ -9,9 +9,9 @@ class HomographyEstimator():
     device: str
     model: Any
     
-    def __init__(self, device: str="cuda", model: MODEL.HOMOGRAPHY_ESTIMATION=MODEL.HOMOGRAPHY_ESTIMATION.RESNET_34) -> None:
+    def __init__(self, model: MODEL.HOMOGRAPHY_ESTIMATION=MODEL.HOMOGRAPHY_ESTIMATION.RESNET_34, device: str="cuda") -> None:
         self.device = device
-        self.model = load_model(device, model)
+        self.model = load_model(model, device)
 
     def __call__(self, img: torch.FloatTensor, wrp: torch.FloatTensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Foward pass of BoundingCircleDetector.

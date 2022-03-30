@@ -10,7 +10,7 @@ from endoscopy.utils import max_rectangle_in_circle, MODEL
 if __name__ == "__main__":
     device = "cuda"
 
-    detector = BoundingCircleDetector(device=device, model=MODEL.SEGMENTATION.UNET_RESNET_34)
+    detector = BoundingCircleDetector(model=MODEL.SEGMENTATION.UNET_RESNET_34, device=device)
     vc = cv2.VideoCapture("data/endo.mp4")
     B = 5
     buffer = []

@@ -18,6 +18,6 @@ class MODEL(object):
     SEGMENTATION = SEGMENTATION_ENUM
 
 
-def load_model(device: str="cuda", model: MODEL=MODEL.SEGMENTATION.UNET_RESNET_34):
+def load_model(model: MODEL, device: str="cuda"):
     model = torch.hub.load_state_dict_from_url(model.value.format(device))
     return model.eval()
