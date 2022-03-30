@@ -33,4 +33,4 @@ class HomographyEstimator():
         uv_img = image_edges(img).to(self.device)
         h = four_point_homography_to_matrix(uv_img, duv)
 
-        return h, duv
+        return h.to(img.device), duv.to(img.device)
