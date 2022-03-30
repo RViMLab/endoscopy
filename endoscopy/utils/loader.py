@@ -8,11 +8,11 @@ class MODEL(object):
     URLs to models are to include a 'cpu' or 'cuda' tag, respectively.
     """
     class HOMOGRAPHY_ESTIMATION_ENUM(Enum):
-        RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.0.1/h_est_resnet_34_{}.pt"
+        RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/h_est_resnet_34_{}.pt"
 
     class SEGMENTATION_ENUM(Enum):
-        UNET_RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.0.1/seg_unet_resnet_34_{}.pt"
-        UNET_RESNET_34_TINY = "https://github.com/RViMLab/endoscopy/releases/download/0.0.1/seg_unet_resnet_34_{}_tiny.pt"
+        UNET_RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/seg_unet_resnet_34_{}.pt"
+        UNET_RESNET_34_TINY = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/seg_unet_resnet_34_{}_tiny.pt"
 
     HOMOGRAPHY_ESTIMATION = HOMOGRAPHY_ESTIMATION_ENUM
     SEGMENTATION = SEGMENTATION_ENUM
