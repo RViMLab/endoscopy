@@ -4,13 +4,13 @@ from kornia import tensor_to_image, image_to_tensor
 from kornia.geometry import crop_and_resize
 
 from endoscopy.bounding_circle_detector import BoundingCircleDetector
-from endoscopy.utils import max_rectangle_in_circle, SEGMENTATION_MODEL
+from endoscopy.utils import max_rectangle_in_circle, MODEL
 
 
 if __name__ == "__main__":
     device = "cuda"
 
-    detector = BoundingCircleDetector(device=device, model_enum=SEGMENTATION_MODEL.UNET_RESNET_34)
+    detector = BoundingCircleDetector(device=device, model=MODEL.SEGMENTATION.UNET_RESNET_34)
     img = np.load("data/laparoscopic_view.npy")
     img = image_to_tensor(img, keepdim=False).float()/255.
  

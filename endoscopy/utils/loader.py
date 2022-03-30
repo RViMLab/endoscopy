@@ -2,11 +2,22 @@ import torch
 from enum import Enum
 
 
-class SEGMENTATION_MODEL(Enum):
-    UNET_RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.0.1/seg_unet_resnet_34.pt"
-    UNET_RESNET_34_TINY = "https://github.com/RViMLab/endoscopy/releases/download/0.0.1/seg_unet_resnet_34_tiny.pt"
+class MODEL(object):
+    r"""Model meta class.
+
+    URLs to models are to include a 'cpu' or 'cuda' tag, respectively.
+    """
+    class HOMOGRAPHY_ESTIMATION_ENUM(Enum):
+        RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.0.1/h_est_resnet_34_{}.pt"
+
+    class SEGMENTATION_ENUM(Enum):
+        UNET_RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.0.1/seg_unet_resnet_34_{}.pt"
+        UNET_RESNET_34_TINY = "https://github.com/RViMLab/endoscopy/releases/download/0.0.1/seg_unet_resnet_34_{}_tiny.pt"
+
+    HOMOGRAPHY_ESTIMATION = HOMOGRAPHY_ESTIMATION_ENUM
+    SEGMENTATION = SEGMENTATION_ENUM
 
 
-def load_model(device: str="cuda", model_enum: SEGMENTATION_MODEL=SEGMENTATION_MODEL.UNET_RESNET_34):
-    model = torch.hub.load_state_dict_from_url(model_enum.value)
-    return model.eval().to(device)
+def load_model(device: str="cuda", model: MODEL=MODEL.SEGMENTATION.UNET_RESNET_34):
+    model = torch.hub.load_state_dict_from_url(model.value.format(device))
+    return model.eval()
