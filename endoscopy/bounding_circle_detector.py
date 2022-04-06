@@ -29,12 +29,14 @@ class BoundingCircleDetector():
         """
         if img.dim() != 4:
             raise RuntimeError("BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(img.dim()))
-        if reduction is None:
+        with torch.no_grad():
             seg = self.model(img.to(self.device))
+        if reduction is None:
+            pass
         elif reduction == "mean":
-            seg = self.model(img.to(self.device)).mean(dim=0, keepdim=True)
+            seg = seg.mean(dim=0, keepdim=True)
         elif reduction == "max":
-            seg, _ = self.model(img.to(self.device)).max(dim=0, keepdim=True)
+            seg, _ = seg.max(dim=0, keepdim=True)
         else:
             raise ValueError("BoundingCircleDetector: Invalid reduction {} passed.".format(reduction))
 

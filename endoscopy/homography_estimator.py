@@ -29,7 +29,8 @@ class HomographyEstimator():
 
         img, wrp = resize(img, [240, 320]), resize(wrp, [240, 320])
 
-        duv = self.model(img.to(self.device), wrp.to(self.device))
+        with torch.no_grad():
+            duv = self.model(img.to(self.device), wrp.to(self.device))
         uv_img = image_edges(img).to(self.device)
         h = four_point_homography_to_matrix(uv_img, duv)
 
