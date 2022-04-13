@@ -10,7 +10,7 @@ class HomographyEstimator():
     device: str
     model: Any
     
-    def __init__(self, model: MODEL.HOMOGRAPHY_ESTIMATION=MODEL.HOMOGRAPHY_ESTIMATION.RESNET_34, device: str="cuda") -> None:
+    def __init__(self, model: MODEL.HOMOGRAPHY_ESTIMATION=MODEL.HOMOGRAPHY_ESTIMATION.H_48_RESNET_34, device: str="cuda") -> None:
         self.device = device
         self.model = load_model(model, device)
 

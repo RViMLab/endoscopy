@@ -10,7 +10,7 @@ from endoscopy.utils import MODEL, yt_alpha_blend
 if __name__ == "__main__":
     device = "cuda"
 
-    homography_estimator = HomographyEstimator(model=MODEL.HOMOGRAPHY_ESTIMATION.RESNET_34, device=device)
+    homography_estimator = HomographyEstimator(model=MODEL.HOMOGRAPHY_ESTIMATION.H_48_RESNET_34, device=device)
     img = np.load("data/laparoscopic_view.npy")
     img = image_to_tensor(img, keepdim=False).float()/255.
  
