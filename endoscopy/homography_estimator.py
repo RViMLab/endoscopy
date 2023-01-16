@@ -1,20 +1,27 @@
+from typing import Any, Tuple
+
 import torch
-from typing import Tuple, Any
 from kornia.geometry import resize
 
-from .utils.loader import MODEL, load_model
 from .utils.helpers import four_point_homography_to_matrix, image_edges
+from .utils.loader import MODEL, load_model
 
 
-class HomographyEstimator():
+class HomographyEstimator:
     device: str
     model: Any
-    
-    def __init__(self, model: MODEL.HOMOGRAPHY_ESTIMATION=MODEL.HOMOGRAPHY_ESTIMATION.H_48_RESNET_34, device: str="cuda") -> None:
+
+    def __init__(
+        self,
+        model: MODEL.HOMOGRAPHY_ESTIMATION = MODEL.HOMOGRAPHY_ESTIMATION.H_48_RESNET_34,
+        device: str = "cuda",
+    ) -> None:
         self.device = device
         self.model = load_model(model, device)
 
-    def __call__(self, img: torch.FloatTensor, wrp: torch.FloatTensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    def __call__(
+        self, img: torch.FloatTensor, wrp: torch.FloatTensor
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Foward pass of BoundingCircleDetector.
 
         Args:
@@ -25,7 +32,11 @@ class HomographyEstimator():
             duv (torch.Tensor): Four point homography of shape Bx4x2
         """
         if img.dim() != 4 or wrp.dim() != 4:
-            raise RuntimeError("BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(img.dim()))
+            raise RuntimeError(
+                "BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(
+                    img.dim()
+                )
+            )
 
         img, wrp = resize(img, [240, 320]), resize(wrp, [240, 320])
 
