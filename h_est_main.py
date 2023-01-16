@@ -6,7 +6,8 @@ from kornia.geometry import warp_perspective
 from endoscopy.homography_estimator import HomographyEstimator
 from endoscopy.utils import MODEL, yt_alpha_blend
 
-if __name__ == "__main__":
+
+def main() -> None:
     device = "cuda"
 
     homography_estimator = HomographyEstimator(
@@ -25,3 +26,7 @@ if __name__ == "__main__":
     blend = tensor_to_image(blend.cpu(), keepdim=False)
     cv2.imshow("blend", blend)
     cv2.waitKey()
+
+
+if __name__ == "__main__":
+    main()

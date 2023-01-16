@@ -6,7 +6,8 @@ from kornia.geometry import crop_and_resize
 from endoscopy.bounding_circle_detector import BoundingCircleDetector
 from endoscopy.utils import MODEL, max_rectangle_in_circle
 
-if __name__ == "__main__":
+
+def main() -> None:
     device = "cuda"
 
     detector = BoundingCircleDetector(
@@ -33,3 +34,7 @@ if __name__ == "__main__":
     cv2.imshow("img", img)
     cv2.imshow("crp", crp)
     cv2.waitKey()
+
+
+if __name__ == "__main__":
+    main()
