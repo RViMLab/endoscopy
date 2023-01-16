@@ -1,16 +1,17 @@
 import cv2
-from kornia import tensor_to_image, image_to_tensor
-from kornia.geometry import crop_and_resize
 import torch
+from kornia import image_to_tensor, tensor_to_image
+from kornia.geometry import crop_and_resize
 
 from endoscopy.bounding_circle_detector import BoundingCircleDetector
-from endoscopy.utils import max_rectangle_in_circle, MODEL
-
+from endoscopy.utils import MODEL, max_rectangle_in_circle
 
 if __name__ == "__main__":
     device = "cuda"
 
-    detector = BoundingCircleDetector(model=MODEL.SEGMENTATION.UNET_RESNET_34, device=device)
+    detector = BoundingCircleDetector(
+        model=MODEL.SEGMENTATION.UNET_RESNET_34, device=device
+    )
     vc = cv2.VideoCapture("data/endo.mp4")
     B = 5
     buffer = []
@@ -19,7 +20,7 @@ if __name__ == "__main__":
         _, img = vc.read()
         if img is None:
             break
-        buffer.append(image_to_tensor(img, keepdim=True).float()/255.)
+        buffer.append(image_to_tensor(img, keepdim=True).float() / 255.0)
         if len(buffer) >= B:
             imgs = torch.stack(buffer)
 

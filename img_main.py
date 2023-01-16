@@ -1,19 +1,20 @@
 import cv2
 import numpy as np
-from kornia import tensor_to_image, image_to_tensor
+from kornia import image_to_tensor, tensor_to_image
 from kornia.geometry import crop_and_resize
 
 from endoscopy.bounding_circle_detector import BoundingCircleDetector
-from endoscopy.utils import max_rectangle_in_circle, MODEL
-
+from endoscopy.utils import MODEL, max_rectangle_in_circle
 
 if __name__ == "__main__":
     device = "cuda"
 
-    detector = BoundingCircleDetector(model=MODEL.SEGMENTATION.UNET_RESNET_34, device=device)
+    detector = BoundingCircleDetector(
+        model=MODEL.SEGMENTATION.UNET_RESNET_34, device=device
+    )
     img = np.load("data/laparoscopic_view.npy")
-    img = image_to_tensor(img, keepdim=False).float()/255.
- 
+    img = image_to_tensor(img, keepdim=False).float() / 255.0
+
     # detect circle
     center, radius = detector(img, N=1000, reduction=None)
 
