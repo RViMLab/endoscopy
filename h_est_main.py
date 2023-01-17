@@ -13,8 +13,8 @@ def main() -> None:
     homography_estimator = HomographyEstimator(
         model=MODEL.HOMOGRAPHY_ESTIMATION.H_48_RESNET_34, device=device
     )
-    img = np.load("data/cropped_sample_sequence/frame_0.npy")
-    wrp = np.load("data/cropped_sample_sequence/frame_4.npy")
+    img = np.load("data/cropped_sample_sequence/frame_200.npy")
+    wrp = np.load("data/cropped_sample_sequence/frame_209.npy")
     img = image_to_tensor(img, keepdim=False).float() / 255.0
     wrp = image_to_tensor(wrp, keepdim=False).float() / 255.0
 

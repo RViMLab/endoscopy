@@ -30,7 +30,7 @@ class HomographyPredictor:
     def __call__(
         self, imgs: torch.FloatTensor, increment: int = 1
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Predicts future homographies given the past imgs.
+        r"""Predicts future homographies given the past imgs.
 
         Args:
             imgs (torch.FloatTensor): Image sequence of shape BxTxCxHxW. Will be resized to 240x320.
@@ -67,7 +67,9 @@ class HomographyPredictor:
             )  # B*(T-1)xCxHxW -> Bx(T-1)xCxHxW
             duvs_ip1 = self.predictor(
                 imgs_ip1[:, 1:].to(self.device), duvs[:, 1:], dduvs
-            )
-        h_ip1 = four_point_homography_to_matrix(image_edges(imgs), duvs_ip1)
+            ).to(imgs.device)
+        h_ip1 = four_point_homography_to_matrix(
+            image_edges(imgs[:, 1:]).to(imgs.device), duvs_ip1
+        )
 
-        return h_ip1.to(imgs.device), duvs_ip1.to(imgs.device)
+        return h_ip1, duvs_ip1
