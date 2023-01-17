@@ -32,10 +32,8 @@ class HomographyEstimator:
             duv (torch.Tensor): Four point homography of shape Bx4x2
         """
         if img.dim() != 4 or wrp.dim() != 4:
-            raise RuntimeError(
-                "BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(
-                    img.dim()
-                )
+            raise ValueError(
+                f"BoundingCircleDetector: Expected 4 dimensional input, got {img.dim()} dimensional input."
             )
 
         img, wrp = resize(img, [240, 320]), resize(wrp, [240, 320])

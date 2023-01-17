@@ -35,10 +35,8 @@ class BoundingCircleDetector:
             radius (torch.Tensor): Circle's radius of shape B.
         """
         if img.dim() != 4:
-            raise RuntimeError(
-                "BoundingCircleDetector: Expected 4 dimensional input, got {} dimensional input.".format(
-                    img.dim()
-                )
+            raise ValueError(
+                f"BoundingCircleDetector: Expected 4 dimensional input, got {img.dim()} dimensional input."
             )
         with torch.no_grad():
             seg = self.model(img.to(self.device))
@@ -50,7 +48,7 @@ class BoundingCircleDetector:
             seg, _ = seg.max(dim=0, keepdim=True)
         else:
             raise ValueError(
-                "BoundingCircleDetector: Invalid reduction {} passed.".format(reduction)
+                f"BoundingCircleDetector: Invalid reduction {reduction} passed."
             )
 
         _, edg = self.canny(seg)
@@ -60,9 +58,7 @@ class BoundingCircleDetector:
             nonzero = e.nonzero().float()
             if nonzero.numel() < N:
                 raise RuntimeError(
-                    "BoundingCircleDetector: Non suffiecient non-zero elements to sample from, got {}, required {}".format(
-                        nonzero.numel(), N
-                    )
+                    f"BoundingCircleDetector: Non suffiecient non-zero elements to sample from, got {nonzero.numel()}, required {N}"
                 )
             pts.append(
                 nonzero[
