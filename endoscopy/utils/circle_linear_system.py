@@ -4,7 +4,7 @@ import torch
 
 
 def circle_linear_system(pts: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-    """Build a linear system that represents a circle.
+    r"""Build a linear system that represents a circle.
 
     Args:
         pts (torch.Tensor): BxN points of shape BxNxM, where M >= 2.
@@ -22,7 +22,7 @@ def circle_linear_system(pts: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
 
 
 def const_to_rad(x: torch.Tensor) -> torch.Tensor:
-    """Retrieve radius from solution to linear system.
+    r"""Retrieve radius from solution to linear system.
 
     Args:
         x (torch.Tensor): Solutions to circle linear system.

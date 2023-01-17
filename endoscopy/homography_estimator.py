@@ -22,7 +22,7 @@ class HomographyEstimator:
     def __call__(
         self, img: torch.FloatTensor, wrp: torch.FloatTensor
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Foward pass of BoundingCircleDetector.
+        r"""Foward pass of BoundingCircleDetector.
 
         Args:
             img (torch.FloatTensor): Needs to be normalized in [0, 1]. Will be resized to 240x320.

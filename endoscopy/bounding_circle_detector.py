@@ -24,7 +24,7 @@ class BoundingCircleDetector:
     def __call__(
         self, img: torch.FloatTensor, N: int = 100, reduction: str = "mean"
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Foward pass of BoundingCircleDetector.
+        r"""Foward pass of BoundingCircleDetector.
 
         Args:
             img (torch.FloatTensor): Needs to be normalized in [0, 1].
