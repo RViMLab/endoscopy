@@ -26,16 +26,19 @@ def four_point_homography_to_matrix(
 ) -> torch.Tensor:
     r"""Transforms homography from four point representation of shape 4x2 to matrix representation of shape 3x3.
     Args:
-        uv_img (torch.Tensor): Image edges in image coordinates
-        duv (torch.Tensor): Deviation from edges in image coordinates
+        uv_img (torch.Tensor): Image edges in image coordinates of shape ...x4x2
+        duv (torch.Tensor): Deviation from edges in image coordinates of shape ...x4x2
     Return:
-        h (torch.Tensor): Homography of shape 3x3.
+        h (torch.Tensor): Homography of shape ...x3x3.
     Example:
         h = four_point_homography_to_matrix(uv_img, duv)
     """
     uv_wrp = uv_img + duv
-    h = get_perspective_transform(uv_img.flip(-1), uv_wrp.flip(-1))
-    return h
+    h = get_perspective_transform(
+        uv_img.view((-1,) + uv_img.shape[-2:]).flip(-1),
+        uv_wrp.view((-1,) + uv_wrp.shape[-2:]).flip(-1),
+    )
+    return h.view(uv_img.shape[:-2] + (3, 3))
 
 
 def frame_pairs(
@@ -59,18 +62,14 @@ def frame_pairs(
 def image_edges(img: torch.Tensor) -> torch.Tensor:
     r"""Returns edges of image (uv) in OpenCV convention.
     Args:
-        img (torch.Tensor): Image of shape BxCxHxW
+        img (torch.Tensor): Image of shape ...xCxHxW
     Returns:
-        uv (torch.Tensor): Image edges of shape Bx4x2
+        uv (torch.Tensor): Image edges of shape ...x4x2
     """
-    if len(img.shape) != 4:
-        raise ValueError(
-            f"Expected 4 dimensional input, got {len(img.shape)} dimensions."
-        )
     shape = img.shape[-2:]
     uv = torch.tensor(
         [[0, 0], [0, shape[1]], [shape[0], shape[1]], [shape[0], 0]],
         device=img.device,
         dtype=torch.float32,
     )
-    return uv.unsqueeze(0).repeat(img.shape[0], 1, 1)
+    return uv.unsqueeze(0).repeat(img.shape[:-3] + (1, 1))
