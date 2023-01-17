@@ -13,7 +13,7 @@ def main() -> None:
     detector = BoundingCircleDetector(
         model=MODEL.SEGMENTATION.UNET_RESNET_34, device=device
     )
-    vc = cv2.VideoCapture("data/endo.mp4")
+    vc = cv2.VideoCapture("data/sample_video.mp4")
     B = 5
     buffer = []
 

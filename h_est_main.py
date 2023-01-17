@@ -13,15 +13,17 @@ def main() -> None:
     homography_estimator = HomographyEstimator(
         model=MODEL.HOMOGRAPHY_ESTIMATION.H_48_RESNET_34, device=device
     )
-    img = np.load("data/laparoscopic_view.npy")
+    img = np.load("data/cropped_sample_sequence/frame_0.npy")
+    wrp = np.load("data/cropped_sample_sequence/frame_4.npy")
     img = image_to_tensor(img, keepdim=False).float() / 255.0
+    wrp = image_to_tensor(wrp, keepdim=False).float() / 255.0
 
     # estimate homography
-    h, duv = homography_estimator(img, img)
+    h, duv = homography_estimator(img, wrp)
 
     # visualize through blend
-    wrp = warp_perspective(img, h.inverse(), img.shape[-2:])
-    blend = yt_alpha_blend(img, wrp)
+    wrp_est = warp_perspective(img, h.inverse(), img.shape[-2:])
+    blend = yt_alpha_blend(wrp_est, wrp)
 
     blend = tensor_to_image(blend.cpu(), keepdim=False)
     cv2.imshow("blend", blend)

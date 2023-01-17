@@ -13,7 +13,7 @@ def main() -> None:
     detector = BoundingCircleDetector(
         model=MODEL.SEGMENTATION.UNET_RESNET_34, device=device
     )
-    img = np.load("data/laparoscopic_view.npy")
+    img = np.load("data/sample_sequence/frame_0.npy")
     img = image_to_tensor(img, keepdim=False).float() / 255.0
 
     # detect circle
