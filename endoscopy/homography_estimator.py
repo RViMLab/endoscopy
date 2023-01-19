@@ -35,12 +35,14 @@ class HomographyEstimator:
             raise ValueError(
                 f"BoundingCircleDetector: Expected 4 dimensional input, got {img.dim()} dimensional input."
             )
+        tmp_device = img.device
+        img = img.to(self.device)
 
         img, wrp = resize(img, [240, 320]), resize(wrp, [240, 320])
 
         with torch.no_grad():
-            duv = self.model(img.to(self.device), wrp.to(self.device))
-        uv_img = image_edges(img).to(self.device)
+            duv = self.model(img, wrp)
+        uv_img = image_edges(img)
         h = four_point_homography_to_matrix(uv_img, duv)
 
-        return h.to(img.device), duv.to(img.device)
+        return h.to(tmp_device), duv.to(tmp_device)

@@ -14,7 +14,7 @@ class MODEL(object):
         H_64_RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/h_est_64_resnet_34_{}.pt"
 
     class HOMOGRAPHY_PREDICTION_ENUM(Enum):
-        H_FEATURE_LSTM = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/h_pred_feature_lstm_{}.pt"
+        H_64_FEATURE_LSTM = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/h_pred_64_feature_lstm_{}.pt"
 
     class SEGMENTATION_ENUM(Enum):
         UNET_RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/seg_unet_resnet_34_{}.pt"

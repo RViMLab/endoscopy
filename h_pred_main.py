@@ -26,7 +26,9 @@ def natural_keys(text: str) -> List[int]:
     return [atoi(c) for c in re.split(r"(\d+)", text)]
 
 
-def load_images(path: str, increment: int = 1) -> torch.Tensor:
+def load_images(
+    path: str, device: str, increment: int = 1, n_images: int = None
+) -> torch.Tensor:
     file_names = [file_name for file_name in os.listdir(path)]
     file_names = sorted(file_names, key=natural_keys)
     file_names = file_names[::increment]
@@ -36,20 +38,28 @@ def load_images(path: str, increment: int = 1) -> torch.Tensor:
         img = np.load(os.path.join(path, file_name))
         img = cv2.resize(img, (320, 240))
         images.append(img)
-    return torch.tensor(images).permute(0, 3, 1, 2).unsqueeze(0).float() / 255.0
+        if n_images:
+            if len(images) >= n_images:
+                break
+    return (
+        torch.tensor(images, device=device).permute(0, 3, 1, 2).unsqueeze(0).float()
+        / 255.0
+    )
 
 
 def main() -> None:
     device = "cuda"
-    imgs = load_images("data/cropped_sample_sequence", 5)
+    imgs = load_images("data/cropped_sample_sequence", device, 5, None)
 
     homography_predictor = HomographyPredictor(
         estimator=MODEL.HOMOGRAPHY_ESTIMATION.H_48_RESNET_34,
-        predictor=MODEL.HOMOGRAPHY_PREDICTION.H_FEATURE_LSTM,
+        predictor=MODEL.HOMOGRAPHY_PREDICTION.H_64_FEATURE_LSTM,
         device=device,
     )
 
-    hs_ip1, duvs_ip1 = homography_predictor(imgs)
+    hx = None
+    for _ in range(2):
+        hs_ip1, duvs_ip1, hx = homography_predictor(imgs, hx)
 
     wrps_pred = warp_perspective(
         imgs[0, 2:-1], hs_ip1[0, :-1].inverse(), imgs.shape[-2:]
