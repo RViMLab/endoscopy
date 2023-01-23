@@ -8,7 +8,7 @@ import torch
 from kornia import tensor_to_image
 from kornia.geometry import warp_perspective
 
-from endoscopy.homography_predictor import HomographyPredictor
+from endoscopy.homography_predictor import HomographyPredictorMotionPrior
 from endoscopy.utils import MODEL, yt_alpha_blend
 
 
@@ -51,22 +51,23 @@ def main() -> None:
     device = "cuda"
     imgs = load_images("data/cropped_sample_sequence", device, 5, None)
 
-    homography_predictor = HomographyPredictor(
-        predictor=MODEL.HOMOGRAPHY_PREDICTION.H_1024_FEATURE_LSTM,
+    homography_predictor = HomographyPredictorMotionPrior(
+        estimator=MODEL.HOMOGRAPHY_ESTIMATION.H_48_RESNET_34,
+        predictor=MODEL.HOMOGRAPHY_PREDICTION.H_64_FEATURE_LSTM_MOTION_PRIOR,
         device=device,
     )
 
-    # hx = None
-    # for _ in range(2):
-    #     hs_ip1, duvs_ip1, hx = homography_predictor(imgs, hx)
+    hx = None
+    for _ in range(2):
+        hs_ip1, duvs_ip1, hx = homography_predictor(imgs, hx)
 
-    # wrps_pred = warp_perspective(
-    #     imgs[0, 2:-1], hs_ip1[0, :-1].inverse(), imgs.shape[-2:]
-    # )
-    # blends = yt_alpha_blend(wrps_pred, imgs[0, 3:])
-    # for blend in blends:
-    #     cv2.imshow("blend", tensor_to_image(blend, keepdim=False))
-    #     cv2.waitKey()
+    wrps_pred = warp_perspective(
+        imgs[0, 2:-1], hs_ip1[0, :-1].inverse(), imgs.shape[-2:]
+    )
+    blends = yt_alpha_blend(wrps_pred, imgs[0, 3:])
+    for blend in blends:
+        cv2.imshow("blend", tensor_to_image(blend, keepdim=False))
+        cv2.waitKey()
 
 
 if __name__ == "__main__":
