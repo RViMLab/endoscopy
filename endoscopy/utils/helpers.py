@@ -4,23 +4,6 @@ import torch
 from kornia.geometry.transform import get_perspective_transform
 
 
-def differentiate_duv(duv: torch.Tensor, batch_first: bool = True) -> torch.Tensor:
-    r"""Computes the finite difference of duv.
-
-    Args:
-        duv (torch.Tensor): Deviation from edges in image coordinates of shape BxTx4x2
-        batch_first (bool): If true, expects input of shape BxTx.., else TxBx...
-
-    Return:
-        dduv (torch.Tensor): Differentiated duv of shape Bx(T-1)x4x2
-    """
-    if batch_first:
-        dduv = duv.narrow(1, 1, duv.size(1) - 1) - duv.narrow(1, 0, duv.size(1) - 1)
-    else:
-        dduv = duv.narrow(0, 1, duv.size(0) - 1) - duv.narrow(0, 0, duv.size(0) - 1)
-    return dduv
-
-
 def four_point_homography_to_matrix(
     uv_img: torch.Tensor, duv: torch.Tensor
 ) -> torch.Tensor:

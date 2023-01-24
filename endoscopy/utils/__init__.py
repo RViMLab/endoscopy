@@ -1,11 +1,6 @@
 from .circle_linear_system import circle_linear_system, const_to_rad
 from .cropping import max_rectangle_in_circle
-from .helpers import (
-    differentiate_duv,
-    four_point_homography_to_matrix,
-    frame_pairs,
-    image_edges,
-)
+from .helpers import four_point_homography_to_matrix, frame_pairs, image_edges
 from .loader import MODEL, load_model
 from .viz import yt_alpha_blend
 
@@ -13,7 +8,6 @@ __all__ = [
     "circle_linear_system",
     "const_to_rad",
     "max_rectangle_in_circle",
-    "differentiate_duv",
     "four_point_homography_to_matrix",
     "frame_pairs",
     "image_edges",
