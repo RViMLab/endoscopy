@@ -49,24 +49,38 @@ def load_images(
 
 def main() -> None:
     device = "cuda"
-    imgs = load_images("data/cropped_sample_sequence", device, 5, None)
+    n_images = 10
+    imgs = load_images(
+        path="data/cropped_sample_sequence",
+        device=device,
+        increment=5,
+        n_images=n_images,
+    )
 
     homography_predictor = HomographyPredictor(
-        predictor=MODEL.HOMOGRAPHY_PREDICTION.H_1024_FEATURE_LSTM,
+        predictor=MODEL.HOMOGRAPHY_PREDICTION.RESNET_34_IN_27,
         device=device,
     )
 
-    # hx = None
-    # for _ in range(2):
-    #     hs_ip1, duvs_ip1, hx = homography_predictor(imgs, hx)
+    h, duv = homography_predictor(imgs[:, : n_images - 1])
+    print(duv)
 
-    # wrps_pred = warp_perspective(
-    #     imgs[0, 2:-1], hs_ip1[0, :-1].inverse(), imgs.shape[-2:]
-    # )
-    # blends = yt_alpha_blend(wrps_pred, imgs[0, 3:])
-    # for blend in blends:
-    #     cv2.imshow("blend", tensor_to_image(blend, keepdim=False))
-    #     cv2.waitKey()
+    wrps_pred = warp_perspective(imgs[:, 0], h[:].inverse(), imgs.shape[-2:])
+    blends = yt_alpha_blend(wrps_pred, imgs[:, -1])
+    blends_no_pred = yt_alpha_blend(imgs[:, 0], imgs[:, -1])
+
+    import matplotlib.pyplot as plt
+
+    for blend, blend_no_pred in zip(blends, blends_no_pred):
+        plot = np.concatenate(
+            [
+                tensor_to_image(blend, keepdim=False),
+                tensor_to_image(blend_no_pred, keepdim=False),
+            ],
+            axis=1,
+        )
+        plt.imshow(plot)
+        plt.show()
 
 
 if __name__ == "__main__":
