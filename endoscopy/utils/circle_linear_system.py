@@ -1,5 +1,6 @@
-import torch
 from typing import Tuple
+
+import torch
 
 
 def circle_linear_system(pts: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -12,20 +13,13 @@ def circle_linear_system(pts: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]
         b (torch.Tensor): Offset to linear equation.
     """
     A = torch.stack(
-        [
-            2*pts[...,-2],
-            2*pts[...,-1],
-            torch.ones_like(pts[...,-1])
-        ], axis=-1
+        [2 * pts[..., -2], 2 * pts[..., -1], torch.ones_like(pts[..., -1])], axis=-1
     )
 
-    b = torch.stack(
-        [
-            torch.square(pts[...,-2]) + torch.square(pts[...,-1])
-        ], axis=-1
-    )
+    b = torch.stack([torch.square(pts[..., -2]) + torch.square(pts[..., -1])], axis=-1)
 
     return A, b
+
 
 def const_to_rad(x: torch.Tensor) -> torch.Tensor:
     """Retrieve radius from solution to linear system.
@@ -35,5 +29,5 @@ def const_to_rad(x: torch.Tensor) -> torch.Tensor:
     Return:
         radius (torch.Tensor): Circle's radius.
     """
-    radius = torch.sqrt(x[:,2] + x[:,0]**2 + x[:,1]**2)
+    radius = torch.sqrt(x[:, 2] + x[:, 0] ** 2 + x[:, 1] ** 2)
     return radius

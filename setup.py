@@ -3,10 +3,7 @@ import setuptools
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
-requirements = [
-    "torch >= 1.9",
-    "kornia >= 0.6"
-]
+requirements = ["torch >= 1.9", "kornia >= 0.6"]
 
 setuptools.setup(
     name="endoscopy",
@@ -17,9 +14,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/RViMLab/endoscopy",
-    project_urls = {
-        "Bug Tracker": "https://github.com/RViMLab/endoscopy/issues"
-    },
+    project_urls={"Bug Tracker": "https://github.com/RViMLab/endoscopy/issues"},
     license="MIT",
     python_revquires=">=3.6",
     classifiers=[
@@ -31,5 +26,5 @@ setuptools.setup(
         "Programming Language :: Python :: 3.9",
     ],
     packages=setuptools.find_packages(include=["endoscopy", "endoscopy.*"]),
-    install_requires=requirements
+    install_requires=requirements,
 )
