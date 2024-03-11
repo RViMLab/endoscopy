@@ -13,7 +13,7 @@ class MODEL(object):
 
     class SEGMENTATION_ENUM(Enum):
         UNET_RESNET_34 = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/seg_unet_resnet_34_{}.pt"
-        UNET_RESNET_34_TINY = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/seg_unet_resnet_34_{}_tiny.pt"
+        UNET_RESNET_34_TINY = "https://github.com/RViMLab/endoscopy/releases/download/0.1.1/seg_unet_resnet_34_tiny_{}.pt"
 
     HOMOGRAPHY_ESTIMATION = HOMOGRAPHY_ESTIMATION_ENUM
     SEGMENTATION = SEGMENTATION_ENUM
